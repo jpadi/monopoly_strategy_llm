@@ -1,0 +1,1332 @@
+{
+  "metadata": {
+    "evaluation_id": "eval_trade_three_houses_each",
+    "game_id": "game_001",
+    "platform": "test_harness",
+    "game_version": "1.0",
+    "evaluation_timestamp": "2026-01-01T00:00:00Z",
+    "schema_version": "1.0",
+    "language": "en"
+  },
+  "game_configuration": {
+    "ruleset_name": "classic_monopoly",
+    "total_houses": 32,
+    "total_hotels": 12,
+    "mortgage_interest_rate": 0.1,
+    "even_building_required": true,
+    "house_sell_back_ratio": 0.5,
+    "hotel_sell_back_ratio": 0.5,
+    "hotel_liquidation_basis": "houses_plus_hotel",
+    "building_allowed_with_mortgaged_group_member": false
+  },
+  "board_state_before": {
+    "players": [
+      {
+        "id": "player_a",
+        "cash": 900,
+        "owned_properties": [
+          "property_st_james"
+        ]
+      },
+      {
+        "id": "player_b",
+        "cash": 2000,
+        "owned_properties": [
+          "property_tennessee",
+          "property_new_york"
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "id": "property_mediterranean",
+        "display_name": "Mediterranean Avenue",
+        "category": "street",
+        "group_id": "brown",
+        "owner_player_id": null,
+        "purchase_price": 60,
+        "mortgage_value": 30,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 2,
+          "one_house": 10,
+          "two_houses": 30,
+          "three_houses": 90,
+          "four_houses": 160,
+          "hotel": 250
+        }
+      },
+      {
+        "id": "property_baltic",
+        "display_name": "Baltic Avenue",
+        "category": "street",
+        "group_id": "brown",
+        "owner_player_id": null,
+        "purchase_price": 60,
+        "mortgage_value": 30,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 4,
+          "one_house": 20,
+          "two_houses": 60,
+          "three_houses": 180,
+          "four_houses": 320,
+          "hotel": 450
+        }
+      },
+      {
+        "id": "property_oriental",
+        "display_name": "Oriental Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 100,
+        "mortgage_value": 50,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 6,
+          "one_house": 30,
+          "two_houses": 90,
+          "three_houses": 270,
+          "four_houses": 400,
+          "hotel": 550
+        }
+      },
+      {
+        "id": "property_vermont",
+        "display_name": "Vermont Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 100,
+        "mortgage_value": 50,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 6,
+          "one_house": 30,
+          "two_houses": 90,
+          "three_houses": 270,
+          "four_houses": 400,
+          "hotel": 550
+        }
+      },
+      {
+        "id": "property_connecticut",
+        "display_name": "Connecticut Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 120,
+        "mortgage_value": 60,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 8,
+          "one_house": 40,
+          "two_houses": 100,
+          "three_houses": 300,
+          "four_houses": 450,
+          "hotel": 600
+        }
+      },
+      {
+        "id": "property_st_charles",
+        "display_name": "St. Charles Place",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 140,
+        "mortgage_value": 70,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 10,
+          "one_house": 50,
+          "two_houses": 150,
+          "three_houses": 450,
+          "four_houses": 625,
+          "hotel": 750
+        }
+      },
+      {
+        "id": "property_states",
+        "display_name": "States Avenue",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 140,
+        "mortgage_value": 70,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 10,
+          "one_house": 50,
+          "two_houses": 150,
+          "three_houses": 450,
+          "four_houses": 625,
+          "hotel": 750
+        }
+      },
+      {
+        "id": "property_virginia",
+        "display_name": "Virginia Avenue",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 160,
+        "mortgage_value": 80,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 12,
+          "one_house": 60,
+          "two_houses": 180,
+          "three_houses": 500,
+          "four_houses": 700,
+          "hotel": 900
+        }
+      },
+      {
+        "id": "property_st_james",
+        "display_name": "St. James Place",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_a",
+        "purchase_price": 180,
+        "mortgage_value": 90,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 14,
+          "one_house": 70,
+          "two_houses": 200,
+          "three_houses": 550,
+          "four_houses": 750,
+          "hotel": 950
+        }
+      },
+      {
+        "id": "property_tennessee",
+        "display_name": "Tennessee Avenue",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_b",
+        "purchase_price": 180,
+        "mortgage_value": 90,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 14,
+          "one_house": 70,
+          "two_houses": 200,
+          "three_houses": 550,
+          "four_houses": 750,
+          "hotel": 950
+        }
+      },
+      {
+        "id": "property_new_york",
+        "display_name": "New York Avenue",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_b",
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 16,
+          "one_house": 80,
+          "two_houses": 220,
+          "three_houses": 600,
+          "four_houses": 800,
+          "hotel": 1000
+        }
+      },
+      {
+        "id": "property_kentucky",
+        "display_name": "Kentucky Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 220,
+        "mortgage_value": 110,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 22,
+          "one_house": 110,
+          "two_houses": 330,
+          "three_houses": 800,
+          "four_houses": 975,
+          "hotel": 1150
+        }
+      },
+      {
+        "id": "property_indiana",
+        "display_name": "Indiana Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 220,
+        "mortgage_value": 110,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 22,
+          "one_house": 110,
+          "two_houses": 330,
+          "three_houses": 800,
+          "four_houses": 975,
+          "hotel": 1150
+        }
+      },
+      {
+        "id": "property_illinois",
+        "display_name": "Illinois Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 240,
+        "mortgage_value": 120,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 24,
+          "one_house": 120,
+          "two_houses": 360,
+          "three_houses": 850,
+          "four_houses": 1025,
+          "hotel": 1200
+        }
+      },
+      {
+        "id": "property_atlantic",
+        "display_name": "Atlantic Avenue",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 260,
+        "mortgage_value": 130,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_ventnor",
+        "display_name": "Ventnor Avenue",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 260,
+        "mortgage_value": 130,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_marvin_gardens",
+        "display_name": "Marvin Gardens",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 280,
+        "mortgage_value": 140,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 28,
+          "one_house": 150,
+          "two_houses": 450,
+          "three_houses": 1000,
+          "four_houses": 1200,
+          "hotel": 1400
+        }
+      },
+      {
+        "id": "property_pacific",
+        "display_name": "Pacific Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 300,
+        "mortgage_value": 150,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_north_carolina",
+        "display_name": "North Carolina Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 300,
+        "mortgage_value": 150,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_pennsylvania",
+        "display_name": "Pennsylvania Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 320,
+        "mortgage_value": 160,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 28,
+          "one_house": 150,
+          "two_houses": 450,
+          "three_houses": 1000,
+          "four_houses": 1200,
+          "hotel": 1400
+        }
+      },
+      {
+        "id": "property_park_place",
+        "display_name": "Park Place",
+        "category": "street",
+        "group_id": "dark_blue",
+        "owner_player_id": null,
+        "purchase_price": 350,
+        "mortgage_value": 175,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 35,
+          "one_house": 175,
+          "two_houses": 500,
+          "three_houses": 1100,
+          "four_houses": 1300,
+          "hotel": 1500
+        }
+      },
+      {
+        "id": "property_boardwalk",
+        "display_name": "Boardwalk",
+        "category": "street",
+        "group_id": "dark_blue",
+        "owner_player_id": null,
+        "purchase_price": 400,
+        "mortgage_value": 200,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 50,
+          "one_house": 200,
+          "two_houses": 600,
+          "three_houses": 1400,
+          "four_houses": 1700,
+          "hotel": 2000
+        }
+      },
+      {
+        "id": "property_rr_1",
+        "display_name": "Reading Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_2",
+        "display_name": "Pennsylvania Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_3",
+        "display_name": "B. & O. Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_4",
+        "display_name": "Short Line",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_electric_company",
+        "display_name": "Electric Company",
+        "category": "utility",
+        "group_id": "utility",
+        "owner_player_id": null,
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "utility_1_owned": 48,
+          "utility_2_owned": 120
+        }
+      },
+      {
+        "id": "property_water_works",
+        "display_name": "Water Works",
+        "category": "utility",
+        "group_id": "utility",
+        "owner_player_id": null,
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "utility_1_owned": 48,
+          "utility_2_owned": 120
+        }
+      }
+    ],
+    "tradable_assets": [],
+    "game_state": {
+      "available_houses": 32,
+      "available_hotels": 12
+    }
+  },
+  "board_state_after": {
+    "players": [
+      {
+        "id": "player_a",
+        "cash": 900,
+        "owned_properties": [
+          "property_st_james",
+          "property_tennessee",
+          "property_new_york"
+        ]
+      },
+      {
+        "id": "player_b",
+        "cash": 2000,
+        "owned_properties": []
+      }
+    ],
+    "properties": [
+      {
+        "id": "property_mediterranean",
+        "display_name": "Mediterranean Avenue",
+        "category": "street",
+        "group_id": "brown",
+        "owner_player_id": null,
+        "purchase_price": 60,
+        "mortgage_value": 30,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 2,
+          "one_house": 10,
+          "two_houses": 30,
+          "three_houses": 90,
+          "four_houses": 160,
+          "hotel": 250
+        }
+      },
+      {
+        "id": "property_baltic",
+        "display_name": "Baltic Avenue",
+        "category": "street",
+        "group_id": "brown",
+        "owner_player_id": null,
+        "purchase_price": 60,
+        "mortgage_value": 30,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 4,
+          "one_house": 20,
+          "two_houses": 60,
+          "three_houses": 180,
+          "four_houses": 320,
+          "hotel": 450
+        }
+      },
+      {
+        "id": "property_oriental",
+        "display_name": "Oriental Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 100,
+        "mortgage_value": 50,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 6,
+          "one_house": 30,
+          "two_houses": 90,
+          "three_houses": 270,
+          "four_houses": 400,
+          "hotel": 550
+        }
+      },
+      {
+        "id": "property_vermont",
+        "display_name": "Vermont Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 100,
+        "mortgage_value": 50,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 6,
+          "one_house": 30,
+          "two_houses": 90,
+          "three_houses": 270,
+          "four_houses": 400,
+          "hotel": 550
+        }
+      },
+      {
+        "id": "property_connecticut",
+        "display_name": "Connecticut Avenue",
+        "category": "street",
+        "group_id": "light_blue",
+        "owner_player_id": null,
+        "purchase_price": 120,
+        "mortgage_value": 60,
+        "house_cost": 50,
+        "hotel_cost": 50,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 8,
+          "one_house": 40,
+          "two_houses": 100,
+          "three_houses": 300,
+          "four_houses": 450,
+          "hotel": 600
+        }
+      },
+      {
+        "id": "property_st_charles",
+        "display_name": "St. Charles Place",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 140,
+        "mortgage_value": 70,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 10,
+          "one_house": 50,
+          "two_houses": 150,
+          "three_houses": 450,
+          "four_houses": 625,
+          "hotel": 750
+        }
+      },
+      {
+        "id": "property_states",
+        "display_name": "States Avenue",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 140,
+        "mortgage_value": 70,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 10,
+          "one_house": 50,
+          "two_houses": 150,
+          "three_houses": 450,
+          "four_houses": 625,
+          "hotel": 750
+        }
+      },
+      {
+        "id": "property_virginia",
+        "display_name": "Virginia Avenue",
+        "category": "street",
+        "group_id": "pink",
+        "owner_player_id": null,
+        "purchase_price": 160,
+        "mortgage_value": 80,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 12,
+          "one_house": 60,
+          "two_houses": 180,
+          "three_houses": 500,
+          "four_houses": 700,
+          "hotel": 900
+        }
+      },
+      {
+        "id": "property_st_james",
+        "display_name": "St. James Place",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_a",
+        "purchase_price": 180,
+        "mortgage_value": 90,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 14,
+          "one_house": 70,
+          "two_houses": 200,
+          "three_houses": 550,
+          "four_houses": 750,
+          "hotel": 950
+        }
+      },
+      {
+        "id": "property_tennessee",
+        "display_name": "Tennessee Avenue",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_a",
+        "purchase_price": 180,
+        "mortgage_value": 90,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 14,
+          "one_house": 70,
+          "two_houses": 200,
+          "three_houses": 550,
+          "four_houses": 750,
+          "hotel": 950
+        }
+      },
+      {
+        "id": "property_new_york",
+        "display_name": "New York Avenue",
+        "category": "street",
+        "group_id": "orange",
+        "owner_player_id": "player_a",
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 16,
+          "one_house": 80,
+          "two_houses": 220,
+          "three_houses": 600,
+          "four_houses": 800,
+          "hotel": 1000
+        }
+      },
+      {
+        "id": "property_kentucky",
+        "display_name": "Kentucky Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 220,
+        "mortgage_value": 110,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 22,
+          "one_house": 110,
+          "two_houses": 330,
+          "three_houses": 800,
+          "four_houses": 975,
+          "hotel": 1150
+        }
+      },
+      {
+        "id": "property_indiana",
+        "display_name": "Indiana Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 220,
+        "mortgage_value": 110,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 22,
+          "one_house": 110,
+          "two_houses": 330,
+          "three_houses": 800,
+          "four_houses": 975,
+          "hotel": 1150
+        }
+      },
+      {
+        "id": "property_illinois",
+        "display_name": "Illinois Avenue",
+        "category": "street",
+        "group_id": "red",
+        "owner_player_id": null,
+        "purchase_price": 240,
+        "mortgage_value": 120,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 24,
+          "one_house": 120,
+          "two_houses": 360,
+          "three_houses": 850,
+          "four_houses": 1025,
+          "hotel": 1200
+        }
+      },
+      {
+        "id": "property_atlantic",
+        "display_name": "Atlantic Avenue",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 260,
+        "mortgage_value": 130,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_ventnor",
+        "display_name": "Ventnor Avenue",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 260,
+        "mortgage_value": 130,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_marvin_gardens",
+        "display_name": "Marvin Gardens",
+        "category": "street",
+        "group_id": "yellow",
+        "owner_player_id": null,
+        "purchase_price": 280,
+        "mortgage_value": 140,
+        "house_cost": 150,
+        "hotel_cost": 150,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 28,
+          "one_house": 150,
+          "two_houses": 450,
+          "three_houses": 1000,
+          "four_houses": 1200,
+          "hotel": 1400
+        }
+      },
+      {
+        "id": "property_pacific",
+        "display_name": "Pacific Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 300,
+        "mortgage_value": 150,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_north_carolina",
+        "display_name": "North Carolina Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 300,
+        "mortgage_value": 150,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 26,
+          "one_house": 130,
+          "two_houses": 390,
+          "three_houses": 900,
+          "four_houses": 1100,
+          "hotel": 1275
+        }
+      },
+      {
+        "id": "property_pennsylvania",
+        "display_name": "Pennsylvania Avenue",
+        "category": "street",
+        "group_id": "green",
+        "owner_player_id": null,
+        "purchase_price": 320,
+        "mortgage_value": 160,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 28,
+          "one_house": 150,
+          "two_houses": 450,
+          "three_houses": 1000,
+          "four_houses": 1200,
+          "hotel": 1400
+        }
+      },
+      {
+        "id": "property_park_place",
+        "display_name": "Park Place",
+        "category": "street",
+        "group_id": "dark_blue",
+        "owner_player_id": null,
+        "purchase_price": 350,
+        "mortgage_value": 175,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 35,
+          "one_house": 175,
+          "two_houses": 500,
+          "three_houses": 1100,
+          "four_houses": 1300,
+          "hotel": 1500
+        }
+      },
+      {
+        "id": "property_boardwalk",
+        "display_name": "Boardwalk",
+        "category": "street",
+        "group_id": "dark_blue",
+        "owner_player_id": null,
+        "purchase_price": 400,
+        "mortgage_value": 200,
+        "house_cost": 200,
+        "hotel_cost": 200,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "base": 50,
+          "one_house": 200,
+          "two_houses": 600,
+          "three_houses": 1400,
+          "four_houses": 1700,
+          "hotel": 2000
+        }
+      },
+      {
+        "id": "property_rr_1",
+        "display_name": "Reading Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_2",
+        "display_name": "Pennsylvania Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_3",
+        "display_name": "B. & O. Railroad",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_rr_4",
+        "display_name": "Short Line",
+        "category": "railroad",
+        "group_id": "railroad",
+        "owner_player_id": null,
+        "purchase_price": 200,
+        "mortgage_value": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "railroad_1_owned": 25,
+          "railroad_2_owned": 50,
+          "railroad_3_owned": 100,
+          "railroad_4_owned": 200
+        }
+      },
+      {
+        "id": "property_electric_company",
+        "display_name": "Electric Company",
+        "category": "utility",
+        "group_id": "utility",
+        "owner_player_id": null,
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "utility_1_owned": 48,
+          "utility_2_owned": 120
+        }
+      },
+      {
+        "id": "property_water_works",
+        "display_name": "Water Works",
+        "category": "utility",
+        "group_id": "utility",
+        "owner_player_id": null,
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {
+          "utility_1_owned": 48,
+          "utility_2_owned": 120
+        }
+      }
+    ],
+    "tradable_assets": [],
+    "game_state": {
+      "available_houses": 32,
+      "available_hotels": 12
+    }
+  },
+  "trade": {
+    "id": "trade_three_houses_each",
+    "status": "completed",
+    "initiating_player_id": "player_a",
+    "participants": [
+      "player_a",
+      "player_b"
+    ],
+    "transfers": [
+      {
+        "id": "t1",
+        "from_player_id": "player_b",
+        "to_player_id": "player_a",
+        "asset_type": "property",
+        "asset_id": "property_tennessee",
+        "amount": 0
+      },
+      {
+        "id": "t2",
+        "from_player_id": "player_b",
+        "to_player_id": "player_a",
+        "asset_type": "property",
+        "asset_id": "property_new_york",
+        "amount": 0
+      }
+    ]
+  }
+}

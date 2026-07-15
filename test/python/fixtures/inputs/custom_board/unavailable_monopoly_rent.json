@@ -1,0 +1,196 @@
+{
+  "metadata": {
+    "evaluation_id": "eval_trade_unavailable_monopoly_rent",
+    "game_id": "game_001",
+    "platform": "test_harness",
+    "game_version": "1.0",
+    "evaluation_timestamp": "2026-01-01T00:00:00Z",
+    "schema_version": "1.0",
+    "language": "en"
+  },
+  "game_configuration": {
+    "ruleset_name": "custom_purple_board",
+    "total_houses": 32,
+    "total_hotels": 12,
+    "mortgage_interest_rate": 0.1,
+    "even_building_required": true,
+    "house_sell_back_ratio": 0.5,
+    "hotel_sell_back_ratio": 0.5,
+    "hotel_liquidation_basis": "houses_plus_hotel",
+    "building_allowed_with_mortgaged_group_member": false
+  },
+  "board_state_before": {
+    "players": [
+      {
+        "id": "player_a",
+        "cash": 2000,
+        "owned_properties": [
+          "property_custom_1",
+          "property_custom_2"
+        ]
+      },
+      {
+        "id": "player_b",
+        "cash": 1500,
+        "owned_properties": [
+          "property_custom_3"
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "id": "property_custom_1",
+        "display_name": "Custom Street 1",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_a",
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      },
+      {
+        "id": "property_custom_2",
+        "display_name": "Custom Street 2",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_a",
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      },
+      {
+        "id": "property_custom_3",
+        "display_name": "Custom Street 3",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_b",
+        "purchase_price": 160,
+        "mortgage_value": 80,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      }
+    ],
+    "tradable_assets": [],
+    "game_state": {
+      "available_houses": 32,
+      "available_hotels": 12
+    }
+  },
+  "board_state_after": {
+    "players": [
+      {
+        "id": "player_a",
+        "cash": 1700,
+        "owned_properties": [
+          "property_custom_1",
+          "property_custom_2",
+          "property_custom_3"
+        ]
+      },
+      {
+        "id": "player_b",
+        "cash": 1800,
+        "owned_properties": []
+      }
+    ],
+    "properties": [
+      {
+        "id": "property_custom_1",
+        "display_name": "Custom Street 1",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_a",
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      },
+      {
+        "id": "property_custom_2",
+        "display_name": "Custom Street 2",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_a",
+        "purchase_price": 150,
+        "mortgage_value": 75,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      },
+      {
+        "id": "property_custom_3",
+        "display_name": "Custom Street 3",
+        "category": "street",
+        "group_id": "custom_purple",
+        "owner_player_id": "player_a",
+        "purchase_price": 160,
+        "mortgage_value": 80,
+        "house_cost": 100,
+        "hotel_cost": 100,
+        "houses": 0,
+        "has_hotel": false,
+        "is_mortgaged": false,
+        "is_tradable": true,
+        "rent_table": {}
+      }
+    ],
+    "tradable_assets": [],
+    "game_state": {
+      "available_houses": 32,
+      "available_hotels": 12
+    }
+  },
+  "trade": {
+    "id": "trade_unavailable_monopoly_rent",
+    "status": "completed",
+    "initiating_player_id": "player_a",
+    "participants": [
+      "player_a",
+      "player_b"
+    ],
+    "transfers": [
+      {
+        "id": "transfer_cash",
+        "from_player_id": "player_a",
+        "to_player_id": "player_b",
+        "asset_type": "cash",
+        "asset_id": null,
+        "amount": 300
+      },
+      {
+        "id": "transfer_custom",
+        "from_player_id": "player_b",
+        "to_player_id": "player_a",
+        "asset_type": "property",
+        "asset_id": "property_custom_3",
+        "amount": 0
+      }
+    ]
+  }
+}
