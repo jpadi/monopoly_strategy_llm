@@ -6,7 +6,7 @@ The implementation includes the deterministic Static Evaluator and the LLM Judge
 
 Normative documentation is authoritative. When implementation and specification disagree, the specification is correct.
 
-**Repository version:** 1.2.0 — see [CHANGELOG](../../CHANGELOG.md).
+**Repository version:** 1.2.1 — see [CHANGELOG](../../CHANGELOG.md).
 
 ---
 
@@ -615,10 +615,17 @@ Python version: **3.12** reference; **3.10+** supported.
 
 ## Versioning
 
+| Version | Scope |
+|---------|--------|
+| **1.0.0** | Specification-only architecture |
+| **1.1.0** | Python Static Evaluator |
+| **1.2.0** | Python LLM Judge and provider integration |
+| **1.2.1** | CHANGELOG and release-documentation correction |
+
 | Concept | Value |
 |---------|-------|
-| Repository version | `1.2.0` |
-| Python package version (`pyproject.toml`) | `1.2.0` |
+| Repository version | `1.2.1` |
+| Python package version (`pyproject.toml`) | `1.2.1` |
 | Static Algorithm specification version | `1.0` |
 | Risk Reference specification version | `1.0` |
 | Evidence `algorithm_version` in output | `1.0` |

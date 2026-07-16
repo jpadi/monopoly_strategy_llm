@@ -10,9 +10,18 @@ Specifications are implementation-independent. The repository contains Python re
 
 ## Current Release
 
-**Current version: 1.2.0**
+**Current version: 1.2.1**
 
-Version 1.2.0 adds the Python reference implementation of the LLM Judge module (`LlmEvaluation`) with platform-agnostic LLM ports, API-based specification delivery (initial prompt + inline file attachments), Cursor SDK adapter, and unit/functional/integration test architecture.
+Release history:
+
+| Version | Scope |
+|---------|--------|
+| **1.0.0** | Specification-only architecture and documentation |
+| **1.1.0** | Python deterministic Static Evaluator, tests, and specification corrections from implementation |
+| **1.2.0** | Python LLM Judge (`LlmEvaluation`), provider integration, Cursor adapter, validation, repair, and LLM tests |
+| **1.2.1** | Corrective documentation release — repaired CHANGELOG and synchronized release descriptions |
+
+Version 1.2.0 introduced the LLM Judge module with platform-agnostic LLM ports, specification-file delivery, Cursor SDK adapter, and unit/functional/integration test architecture. Version 1.2.1 does not add runtime functionality.
 
 See [CHANGELOG.md](CHANGELOG.md) for the complete release history.
 
@@ -222,6 +231,6 @@ Details: [src/python/README.md#testing](src/python/README.md#testing).
 
 ## Versioning
 
-Repository version: **1.2.0**
+Repository version: **1.2.1**
 
 Each specification document declares its own version. Implementations should document which specification versions they implement. See [CHANGELOG.md](CHANGELOG.md).
