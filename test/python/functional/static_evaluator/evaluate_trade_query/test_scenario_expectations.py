@@ -8,34 +8,29 @@ This is NOT a smoke test - every test verifies specific expected output.
 
 from __future__ import annotations
 
-import pytest
+import sys
+from pathlib import Path
 from typing import Any
+
+import pytest
 
 from Monopoly.StaticEvaluation.Domain.Model.TransferValidation import (
     TransferValidationError,
 )
 
-import sys
-from pathlib import Path
-
 # Add the unit test assertions to the path
 sys.path.insert(
     0,
-    str(
-        Path(__file__).parents[3]
-        / "unit"
-        / "static_evaluator"
-        / "evaluate_trade_service"
-    ),
+    str(Path(__file__).parents[3] / "unit" / "static_evaluator" / "evaluate_trade_service"),
 )
 
+from assertions.scenario_expectations import assert_scenario_expectations
 from assertions.scenario_registry import (
     ScenarioEntry,
-    getValidScenarios,
     getInvalidScenarios,
     getScenarioInputFunction,
+    getValidScenarios,
 )
-from assertions.scenario_expectations import assert_scenario_expectations
 
 
 def _get_flags(evidence: dict[str, Any]) -> list[str]:
@@ -69,17 +64,13 @@ def _assert_functional_expectations(
     # Primary assertion: classification
     if expected.classification is not None:
         assert actual_classification == expected.classification, (
-            f"Scenario {scenario.name}: expected classification {expected.classification}, "
-            f"got {actual_classification}"
+            f"Scenario {scenario.name}: expected classification {expected.classification}, got {actual_classification}"
         )
 
     # Primary flag assertion: at least one expected flag must be present
     if expected.flags:
         found_flags = expected.flags & actual_flags
-        assert found_flags, (
-            f"Scenario {scenario.name}: expected at least one of {expected.flags}, "
-            f"got {actual_flags}"
-        )
+        assert found_flags, f"Scenario {scenario.name}: expected at least one of {expected.flags}, got {actual_flags}"
 
     # No classification for degraded results
     if expected.no_classification:
@@ -123,9 +114,7 @@ def test_scenario_through_query_bus(
 # ==============================================================================
 
 VALIDATION_ERROR_SCENARIOS = [
-    pytest.param(entry, id=entry.name)
-    for entry in getInvalidScenarios()
-    if entry.expected.validation_error
+    pytest.param(entry, id=entry.name) for entry in getInvalidScenarios() if entry.expected.validation_error
 ]
 
 

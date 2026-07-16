@@ -17,7 +17,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class FieldCategory(str, Enum):
@@ -58,7 +57,7 @@ class FieldDefinition:
     required: bool = True
     calculation_types: frozenset[str] = frozenset()
     enum_values: frozenset[str] = frozenset()
-    example_value: Optional[str] = None
+    example_value: str | None = None
 
 
 # ==============================================================================

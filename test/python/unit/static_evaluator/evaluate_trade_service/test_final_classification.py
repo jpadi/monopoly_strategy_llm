@@ -5,9 +5,9 @@ from __future__ import annotations
 from fixtures import scenarioInputs
 
 from .assertions.evidence_assertions import (
-    assertValidEvidenceEnvelope,
     assertFinalClassification,
     assertFlagPresent,
+    assertValidEvidenceEnvelope,
 )
 
 
@@ -46,9 +46,7 @@ class TestStrongFlagClassification:
 
 
 class TestReviewRecommendedClassification:
-    def test_review_recommended_with_multiple_strong_flags(
-        self, execute_scenario
-    ) -> None:
+    def test_review_recommended_with_multiple_strong_flags(self, execute_scenario) -> None:
         input_data = scenarioInputs.reviewRecommendedClassificationInput()
         evidence = execute_scenario(input_data)
         assertValidEvidenceEnvelope(evidence)

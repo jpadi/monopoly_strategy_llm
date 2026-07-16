@@ -19,9 +19,10 @@ Use this registry to power:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 
 class ScenarioFamily(str, Enum):
@@ -126,9 +127,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.CLASSIFICATION,
             expected=ExpectedOutput(
                 classification="NO_FLAG",
-                flags_absent=frozenset(
-                    {"SUSPICIOUS_IMBALANCE", "HIGHLY_SUSPICIOUS_IMBALANCE"}
-                ),
+                flags_absent=frozenset({"SUSPICIOUS_IMBALANCE", "HIGHLY_SUSPICIOUS_IMBALANCE"}),
             ),
         ),
         "ratioJustBelowTwoInput": ScenarioEntry(
@@ -213,9 +212,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="SOFT_FLAG",
-                flags=frozenset(
-                    {"SUSPICIOUS_IMBALANCE"}
-                ),  # Downgraded from HIGHLY by initiator adjustment
+                flags=frozenset({"SUSPICIOUS_IMBALANCE"}),  # Downgraded from HIGHLY by initiator adjustment
             ),
         ),
         "ratioGreaterThanFiveInput": ScenarioEntry(
@@ -441,9 +438,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "twoRailroadsInput": ScenarioEntry(
@@ -454,9 +449,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "threeRailroadsInput": ScenarioEntry(
@@ -467,9 +460,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "fourRailroadsInput": ScenarioEntry(
@@ -480,9 +471,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "lowDevelopmentContextRailroadsInput": ScenarioEntry(
@@ -493,9 +482,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "highDevelopmentContextRailroadsInput": ScenarioEntry(
@@ -645,9 +632,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "tradeWorsensRiskInput": ScenarioEntry(
@@ -675,9 +660,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="STRONG_FLAG",
-                flags=frozenset(
-                    {"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}
-                ),
+                flags=frozenset({"HIGHLY_SUSPICIOUS_IMBALANCE", "SYMBOLIC_VALUE_TRADE"}),
             ),
         ),
         "riskCoverageDeteriorationInput": ScenarioEntry(
@@ -802,9 +785,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.FLAG_PRESENT,
             expected=ExpectedOutput(
                 classification="SOFT_FLAG",
-                flags=frozenset(
-                    {"SUSPICIOUS_IMBALANCE"}
-                ),  # Downgraded by initiator adjustment
+                flags=frozenset({"SUSPICIOUS_IMBALANCE"}),  # Downgraded by initiator adjustment
             ),
         ),
         "dangerousMonopolyGiveawayInput": ScenarioEntry(
@@ -984,9 +965,7 @@ def _buildRegistry() -> dict[str, ScenarioEntry]:
             primary_assertion=AssertionType.CLASSIFICATION,
             expected=ExpectedOutput(
                 classification="NO_FLAG",
-                flags_absent=frozenset(
-                    {"SUSPICIOUS_IMBALANCE", "HIGHLY_SUSPICIOUS_IMBALANCE"}
-                ),
+                flags_absent=frozenset({"SUSPICIOUS_IMBALANCE", "HIGHLY_SUSPICIOUS_IMBALANCE"}),
             ),
         ),
         "softFlagClassificationInput": ScenarioEntry(
@@ -1175,8 +1154,4 @@ def getScenarioInputFunction(name: str) -> Callable[[], dict[str, Any]]:
 
 def getScenariosWithoutExpectations() -> list[ScenarioEntry]:
     """Get scenarios that lack behavioral assertions (should be empty for valid scenarios)."""
-    return [
-        s
-        for s in SCENARIO_REGISTRY.values()
-        if s.is_valid and not s.expected.has_behavioral_assertion()
-    ]
+    return [s for s in SCENARIO_REGISTRY.values() if s.is_valid and not s.expected.has_behavioral_assertion()]

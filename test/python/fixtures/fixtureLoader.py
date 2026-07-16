@@ -16,7 +16,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 FIXTURE_ROOT = Path(__file__).parent / "inputs"
 
 
@@ -60,22 +59,18 @@ def loadScenarioInput(
     try:
         fixture_path.resolve().relative_to(FIXTURE_ROOT.resolve())
     except ValueError:
-        raise FixtureLoadError(
-            f"Invalid fixture path (outside fixture root): {relative_path}"
-        )
+        raise FixtureLoadError(f"Invalid fixture path (outside fixture root): {relative_path}")
 
     try:
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             content = f.read()
-    except IOError as e:
+    except OSError as e:
         raise FixtureLoadError(f"Cannot read fixture {relative_path}: {e}")
 
     try:
         data = json.loads(content)
     except json.JSONDecodeError as e:
-        raise FixtureLoadError(
-            f"Invalid JSON in {relative_path} at line {e.lineno}, column {e.colno}: {e.msg}"
-        )
+        raise FixtureLoadError(f"Invalid JSON in {relative_path} at line {e.lineno}, column {e.colno}: {e.msg}")
 
     if not isinstance(data, dict):
         raise FixtureLoadError(f"Scenario root must be a JSON object: {relative_path}")
@@ -121,9 +116,7 @@ def _validateFixture(data: dict[str, Any], path: str) -> None:
     ]
     for section in required_sections:
         if section not in data:
-            raise FixtureValidationError(
-                f"Missing required section '{section}' in {path}"
-            )
+            raise FixtureValidationError(f"Missing required section '{section}' in {path}")
 
     # Validate metadata completeness
     metadata = data["metadata"]
@@ -188,9 +181,7 @@ def _validateTransfer(transfer: dict[str, Any], index: int, path: str) -> None:
     ]
     for field in required:
         if field not in transfer:
-            raise FixtureValidationError(
-                f"Transfer {index} missing field '{field}' in {path}"
-            )
+            raise FixtureValidationError(f"Transfer {index} missing field '{field}' in {path}")
 
     asset_type = transfer["asset_type"]
     asset_id = transfer["asset_id"]
@@ -198,22 +189,14 @@ def _validateTransfer(transfer: dict[str, Any], index: int, path: str) -> None:
 
     if asset_type == "cash":
         if asset_id is not None:
-            raise FixtureValidationError(
-                f"Transfer {index}: cash transfer requires asset_id=null in {path}"
-            )
+            raise FixtureValidationError(f"Transfer {index}: cash transfer requires asset_id=null in {path}")
         if amount <= 0:
-            raise FixtureValidationError(
-                f"Transfer {index}: cash transfer requires amount > 0 in {path}"
-            )
+            raise FixtureValidationError(f"Transfer {index}: cash transfer requires amount > 0 in {path}")
     elif asset_type == "property":
         if asset_id is None:
-            raise FixtureValidationError(
-                f"Transfer {index}: property transfer requires asset_id in {path}"
-            )
+            raise FixtureValidationError(f"Transfer {index}: property transfer requires asset_id in {path}")
         if amount != 0:
-            raise FixtureValidationError(
-                f"Transfer {index}: property transfer requires amount=0 in {path}"
-            )
+            raise FixtureValidationError(f"Transfer {index}: property transfer requires amount=0 in {path}")
 
 
 def _validateBoardState(board: dict[str, Any], name: str, path: str) -> None:
@@ -257,8 +240,7 @@ def _validateOwnershipConsistency(board: dict[str, Any], name: str, path: str) -
         if owner is not None:
             if owner not in player_ids:
                 raise FixtureValidationError(
-                    f"Property {prop['id']} owned by non-existent player {owner} "
-                    f"in {name} in {path}"
+                    f"Property {prop['id']} owned by non-existent player {owner} in {name} in {path}"
                 )
             player = next(p for p in board["players"] if p["id"] == owner)
             owned = player.get("owned_properties", [])
@@ -282,31 +264,21 @@ def _validateClassicBoard(board: dict[str, Any], name: str, path: str) -> None:
     props = board["properties"]
 
     if len(props) != 28:
-        raise FixtureValidationError(
-            f"Classic board requires 28 properties, found {len(props)} in {name} in {path}"
-        )
+        raise FixtureValidationError(f"Classic board requires 28 properties, found {len(props)} in {name} in {path}")
 
     streets = [p for p in props if p.get("category") == "street"]
     railroads = [p for p in props if p.get("category") == "railroad"]
     utilities = [p for p in props if p.get("category") == "utility"]
 
     if len(streets) != 22:
-        raise FixtureValidationError(
-            f"Classic board requires 22 streets, found {len(streets)} in {name} in {path}"
-        )
+        raise FixtureValidationError(f"Classic board requires 22 streets, found {len(streets)} in {name} in {path}")
     if len(railroads) != 4:
-        raise FixtureValidationError(
-            f"Classic board requires 4 railroads, found {len(railroads)} in {name} in {path}"
-        )
+        raise FixtureValidationError(f"Classic board requires 4 railroads, found {len(railroads)} in {name} in {path}")
     if len(utilities) != 2:
-        raise FixtureValidationError(
-            f"Classic board requires 2 utilities, found {len(utilities)} in {name} in {path}"
-        )
+        raise FixtureValidationError(f"Classic board requires 2 utilities, found {len(utilities)} in {name} in {path}")
 
 
-def _validatePropertySetConsistency(
-    before: dict[str, Any], after: dict[str, Any], path: str
-) -> None:
+def _validatePropertySetConsistency(before: dict[str, Any], after: dict[str, Any], path: str) -> None:
     """Validate before and after have the same property IDs."""
     before_ids = {p["id"] for p in before["properties"]}
     after_ids = {p["id"] for p in after["properties"]}

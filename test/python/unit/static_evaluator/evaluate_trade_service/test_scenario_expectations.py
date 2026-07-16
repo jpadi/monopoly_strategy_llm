@@ -18,14 +18,13 @@ from Monopoly.StaticEvaluation.Domain.Model.TransferValidation import (
     TransferValidationError,
 )
 
+from .assertions.scenario_expectations import assert_scenario_expectations
 from .assertions.scenario_registry import (
     ScenarioEntry,
-    getValidScenarios,
     getInvalidScenarios,
     getScenarioInputFunction,
+    getValidScenarios,
 )
-from .assertions.scenario_expectations import assert_scenario_expectations
-
 
 # ==============================================================================
 # VALID SCENARIO TESTS - One meaningful test per scenario
@@ -57,9 +56,7 @@ def test_scenario_produces_expected_behavior(
 # ==============================================================================
 
 VALIDATION_ERROR_SCENARIOS = [
-    pytest.param(entry, id=entry.name)
-    for entry in getInvalidScenarios()
-    if entry.expected.validation_error
+    pytest.param(entry, id=entry.name) for entry in getInvalidScenarios() if entry.expected.validation_error
 ]
 
 

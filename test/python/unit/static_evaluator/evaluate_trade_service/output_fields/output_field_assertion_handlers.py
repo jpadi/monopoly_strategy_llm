@@ -6,7 +6,8 @@ scenario-specific expected values from the specification and computed dumps.
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from .field_assertions import (
     assertConclusionReferencesCalculation,
@@ -43,9 +44,7 @@ SCENARIO_BLOCKING = "strategicBlockingTradeInput"
 
 def _require_scenario(scenario: str, expected: str) -> None:
     """Require the coverage-selected scenario for this field assertion."""
-    assert scenario == expected, (
-        f"Scenario {scenario!r} does not match required {expected!r} for this field assertion"
-    )
+    assert scenario == expected, f"Scenario {scenario!r} does not match required {expected!r} for this field assertion"
 
 
 def _first_calc(
@@ -66,9 +65,7 @@ def _calcs_with_side(evidence: dict[str, Any], side: str) -> list[dict[str, Any]
 
 def _calcs_with_status(evidence: dict[str, Any], status: str) -> list[dict[str, Any]]:
     """Return all calculations with the given status."""
-    return [
-        c for c in evidence["intermediate_calculations"] if c.get("status") == status
-    ]
+    return [c for c in evidence["intermediate_calculations"] if c.get("status") == status]
 
 
 def _find_development_capability(
@@ -85,9 +82,7 @@ def _find_development_capability(
             continue
         if calc.get("intermediate_values", {}).get("predicate") == predicate:
             return calc
-    raise AssertionError(
-        f"development_capability with predicate={predicate!r} side={side!r} not found"
-    )
+    raise AssertionError(f"development_capability with predicate={predicate!r} side={side!r} not found")
 
 
 def _find_dangerous_monopoly(
@@ -99,9 +94,7 @@ def _find_dangerous_monopoly(
     return _first_calc(evidence, "dangerous_monopoly_availability", side=side)
 
 
-def assert_field_algorithm_id(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_algorithm_id(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertFieldEquals(
         evidence["algorithm_id"],
@@ -111,31 +104,21 @@ def assert_field_algorithm_id(
     )
 
 
-def assert_field_algorithm_name(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_algorithm_name(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
-    assertNonEmptyString(
-        evidence["algorithm_name"], field_path="algorithm_name", scenario=scenario
-    )
+    assertNonEmptyString(evidence["algorithm_name"], field_path="algorithm_name", scenario=scenario)
 
 
-def assert_field_algorithm_version(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_algorithm_version(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
-    assertNonEmptyString(
-        evidence["algorithm_version"], field_path="algorithm_version", scenario=scenario
-    )
+    assertNonEmptyString(evidence["algorithm_version"], field_path="algorithm_version", scenario=scenario)
 
 
 def assert_field_available_construction_budget_cash(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
-    calc = _first_calc(
-        evidence, "available_construction_budget", side="before", player_id="player_a"
-    )
+    calc = _first_calc(evidence, "available_construction_budget", side="before", player_id="player_a")
     assertFieldEquals(
         calc["intermediate_values"]["cash"],
         2000,
@@ -154,9 +137,7 @@ def assert_field_available_risk_resources_mortgage_capacity(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
-    calc = _first_calc(
-        evidence, "available_risk_resources", side="before", player_id="player_a"
-    )
+    calc = _first_calc(evidence, "available_risk_resources", side="before", player_id="player_a")
     assertFieldEquals(
         calc["intermediate_values"]["mortgage_capacity"],
         0,
@@ -208,9 +189,7 @@ def assert_field_base_asset_value_cash_received(
         field_path="base_asset_value.cash_received",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 430, field_path="base_asset_value.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 430, field_path="base_asset_value.result", scenario=scenario)
 
 
 def assert_field_base_asset_value_line_item_building_value(
@@ -234,11 +213,7 @@ def assert_field_base_asset_value_line_item_printed_value(
 ) -> None:
     _require_scenario(scenario, SCENARIO_MORTGAGED)
     calc = _first_calc(evidence, "base_asset_value", side="trade", player_id="player_b")
-    prop_items = [
-        i
-        for i in calc["intermediate_values"]["line_items"]
-        if i.get("type") == "property"
-    ]
+    prop_items = [i for i in calc["intermediate_values"]["line_items"] if i.get("type") == "property"]
     assertFieldEquals(
         prop_items[0]["printed_value"],
         81,
@@ -252,11 +227,7 @@ def assert_field_base_asset_value_line_item_property_id(
 ) -> None:
     _require_scenario(scenario, SCENARIO_MORTGAGED)
     calc = _first_calc(evidence, "base_asset_value", side="trade", player_id="player_b")
-    prop_items = [
-        i
-        for i in calc["intermediate_values"]["line_items"]
-        if i.get("type") == "property"
-    ]
+    prop_items = [i for i in calc["intermediate_values"]["line_items"] if i.get("type") == "property"]
     assert len(prop_items) == 1
     assertNonEmptyString(
         prop_items[0]["property_id"],
@@ -325,12 +296,8 @@ def assert_field_blocking_value_per_property(
     _require_scenario(scenario, SCENARIO_BLOCKING)
     calc = _first_calc(evidence, "blocking_value", side="after", player_id="player_a")
     per_property = calc["intermediate_values"]["per_property"]
-    assertFieldIsType(
-        per_property, list, field_path="blocking_value.per_property", scenario=scenario
-    )
-    st_james = next(
-        p for p in per_property if p["blocking_property_id"] == "property_st_james"
-    )
+    assertFieldIsType(per_property, list, field_path="blocking_value.per_property", scenario=scenario)
+    st_james = next(p for p in per_property if p["blocking_property_id"] == "property_st_james")
     assertFieldEquals(
         st_james["total_blocking_value"],
         1800,
@@ -345,9 +312,7 @@ def assert_field_classification_apparent_overpayer(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["apparent_overpayer"]
-    assertFieldIsType(
-        value, str, field_path="classification.apparent_overpayer", scenario=scenario
-    )
+    assertFieldIsType(value, str, field_path="classification.apparent_overpayer", scenario=scenario)
 
 
 def assert_field_classification_automatic_rule_flag_generated(
@@ -402,9 +367,7 @@ def assert_field_classification_automatic_rules(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["automatic_rules"]
-    assertFieldIsType(
-        value, list, field_path="classification.automatic_rules", scenario=scenario
-    )
+    assertFieldIsType(value, list, field_path="classification.automatic_rules", scenario=scenario)
 
 
 def assert_field_classification_final_classification(
@@ -413,9 +376,7 @@ def assert_field_classification_final_classification(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["final_classification"]
-    assertFieldIsType(
-        value, str, field_path="classification.final_classification", scenario=scenario
-    )
+    assertFieldIsType(value, str, field_path="classification.final_classification", scenario=scenario)
 
 
 def assert_field_classification_flags_after_initiator_adjustment(
@@ -452,9 +413,7 @@ def assert_field_classification_initiating_player_id(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["initiating_player_id"]
-    assertFieldIsType(
-        value, str, field_path="classification.initiating_player_id", scenario=scenario
-    )
+    assertFieldIsType(value, str, field_path="classification.initiating_player_id", scenario=scenario)
 
 
 def assert_field_classification_initiator_adjustment_applied(
@@ -505,9 +464,7 @@ def assert_field_classification_strong_flags(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["strong_flags"]
-    assertFieldIsType(
-        value, list, field_path="classification.strong_flags", scenario=scenario
-    )
+    assertFieldIsType(value, list, field_path="classification.strong_flags", scenario=scenario)
 
 
 def assert_field_classification_trade_ratio(
@@ -516,9 +473,7 @@ def assert_field_classification_trade_ratio(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "final_static_classification", side="trade")
     value = calc["intermediate_values"]["trade_ratio"]
-    assertFieldIsType(
-        value, (int, float), field_path="classification.trade_ratio", scenario=scenario
-    )
+    assertFieldIsType(value, (int, float), field_path="classification.trade_ratio", scenario=scenario)
 
 
 def assert_field_conclusions_classification(
@@ -546,9 +501,7 @@ def assert_field_conclusions_classification_calculation_id(
     assertConclusionReferencesCalculation(evidence, calc_id)
 
 
-def assert_field_conclusions_flags(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_conclusions_flags(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertFieldIsType(
         evidence["final_conclusions"]["flags"],
@@ -563,26 +516,18 @@ def assert_field_conclusions_flags_calculation_id(
 ) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc_id = evidence["final_conclusions"]["flags"]["calculation_id"]
-    assertNonEmptyString(
-        calc_id, field_path="conclusions.flags.calculation_id", scenario=scenario
-    )
+    assertNonEmptyString(calc_id, field_path="conclusions.flags.calculation_id", scenario=scenario)
     assertConclusionReferencesCalculation(evidence, calc_id)
 
 
-def assert_field_conclusions_flags_values(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_conclusions_flags_values(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     flags = evidence["final_conclusions"]["flags"]["values"]
-    assertFieldIsType(
-        flags, list, field_path="conclusions.flags.values", scenario=scenario
-    )
+    assertFieldIsType(flags, list, field_path="conclusions.flags.values", scenario=scenario)
     assert len(flags) == 0
 
 
-def assert_field_conclusions_risk_labels(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_conclusions_risk_labels(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     assertFieldIsType(
         evidence["final_conclusions"]["risk_labels"],
@@ -609,9 +554,7 @@ def assert_field_conclusions_risk_labels_player_after_calculation_id(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
-    calc_id = evidence["final_conclusions"]["risk_labels"]["player_a"][
-        "after_calculation_id"
-    ]
+    calc_id = evidence["final_conclusions"]["risk_labels"]["player_a"]["after_calculation_id"]
     assertNonEmptyString(
         calc_id,
         field_path="conclusions.risk_labels.player.after_calculation_id",
@@ -636,9 +579,7 @@ def assert_field_conclusions_risk_labels_player_before_calculation_id(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
-    calc_id = evidence["final_conclusions"]["risk_labels"]["player_a"][
-        "before_calculation_id"
-    ]
+    calc_id = evidence["final_conclusions"]["risk_labels"]["player_a"]["before_calculation_id"]
     assertNonEmptyString(
         calc_id,
         field_path="conclusions.risk_labels.player.before_calculation_id",
@@ -647,9 +588,7 @@ def assert_field_conclusions_risk_labels_player_before_calculation_id(
     assertConclusionReferencesCalculation(evidence, calc_id)
 
 
-def assert_field_conclusions_risk_warnings(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_conclusions_risk_warnings(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     assertFieldIsType(
         evidence["final_conclusions"]["risk_warnings"],
@@ -733,9 +672,7 @@ def assert_field_conclusions_strategic_value_player_value(
     )
 
 
-def assert_field_conclusions_trade_ratio(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_conclusions_trade_ratio(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertFieldIsType(
         evidence["final_conclusions"]["trade_ratio"],
@@ -750,9 +687,7 @@ def assert_field_conclusions_trade_ratio_calculation_id(
 ) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc_id = evidence["final_conclusions"]["trade_ratio"]["calculation_id"]
-    assertNonEmptyString(
-        calc_id, field_path="conclusions.trade_ratio.calculation_id", scenario=scenario
-    )
+    assertNonEmptyString(calc_id, field_path="conclusions.trade_ratio.calculation_id", scenario=scenario)
     assertConclusionReferencesCalculation(evidence, calc_id)
 
 
@@ -815,9 +750,7 @@ def assert_field_development_capability_predicate(
     )
 
 
-def assert_field_final_conclusions(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_final_conclusions(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertFieldIsType(
         evidence["final_conclusions"],
@@ -827,9 +760,7 @@ def assert_field_final_conclusions(
     )
 
 
-def assert_field_id(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_id(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertNonEmptyString(evidence["id"], field_path="id", scenario=scenario)
 
@@ -867,9 +798,7 @@ def assert_field_immediate_risk_coverage_ratio(
 ) -> None:
     _require_scenario(scenario, SCENARIO_ZERO_THREAT)
     calc = _first_calc(evidence, "immediate_risk", side="after", player_id="player_a")
-    assert calc["intermediate_values"]["coverage_ratio"] is None or calc[
-        "intermediate_values"
-    ].get("no_exposure")
+    assert calc["intermediate_values"]["coverage_ratio"] is None or calc["intermediate_values"].get("no_exposure")
 
 
 def assert_field_immediate_risk_coverage_ratio_component(
@@ -892,9 +821,7 @@ def assert_field_immediate_risk_coverage_ratio_tier(
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     calc = _first_calc(evidence, "immediate_risk", side="after", player_id="player_a")
     value = calc["intermediate_values"]["coverage_ratio_tier"]
-    assertFieldIsType(
-        value, str, field_path="immediate_risk.coverage_ratio_tier", scenario=scenario
-    )
+    assertFieldIsType(value, str, field_path="immediate_risk.coverage_ratio_tier", scenario=scenario)
 
 
 def assert_field_immediate_risk_largest_threat(
@@ -938,9 +865,7 @@ def assert_field_immediate_risk_minimum_risk_penalty(
     )
 
 
-def assert_field_immediate_risk_risk_label(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_immediate_risk_risk_label(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     calc = _first_calc(evidence, "immediate_risk", side="after", player_id="player_a")
     assertFieldEquals(
@@ -957,9 +882,7 @@ def assert_field_immediate_risk_risk_margin(
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     calc = _first_calc(evidence, "immediate_risk", side="after", player_id="player_a")
     value = calc["intermediate_values"]["risk_margin"]
-    assertFieldIsType(
-        value, (int, float), field_path="immediate_risk.risk_margin", scenario=scenario
-    )
+    assertFieldIsType(value, (int, float), field_path="immediate_risk.risk_margin", scenario=scenario)
 
 
 def assert_field_immediate_risk_surplus_or_deficit_amount(
@@ -1018,9 +941,7 @@ def assert_field_immediate_risk_uncapped_risk_penalty(
     )
 
 
-def assert_field_immediate_risk_warnings(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_immediate_risk_warnings(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
     calc = _first_calc(evidence, "immediate_risk", side="after", player_id="player_a")
     assertFieldEquals(
@@ -1031,22 +952,14 @@ def assert_field_immediate_risk_warnings(
     )
 
 
-def assert_field_intermediate_calculations(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_intermediate_calculations(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     calcs = evidence["intermediate_calculations"]
-    assertFieldIsType(
-        calcs, list, field_path="intermediate_calculations", scenario=scenario
-    )
-    assert len(calcs) == 112, (
-        f"Scenario {scenario}: expected 112 calculations, got {len(calcs)}"
-    )
+    assertFieldIsType(calcs, list, field_path="intermediate_calculations", scenario=scenario)
+    assert len(calcs) == 112, f"Scenario {scenario}: expected 112 calculations, got {len(calcs)}"
 
 
-def assert_field_item_calculation_type(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_calculation_type(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIn(
@@ -1064,67 +977,45 @@ def assert_field_item_dependent_calculation_ids(
     all_ids = {c["id"] for c in evidence["intermediate_calculations"]}
     for calc in evidence["intermediate_calculations"]:
         deps = calc["dependent_calculation_ids"]
-        assertFieldIsType(
-            deps, list, field_path="item.dependent_calculation_ids", scenario=scenario
-        )
+        assertFieldIsType(deps, list, field_path="item.dependent_calculation_ids", scenario=scenario)
         for dep_id in deps:
             assert dep_id in all_ids
 
 
-def assert_field_item_description(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_description(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
-        assertNonEmptyString(
-            calc["description"], field_path="item.description", scenario=scenario
-        )
+        assertNonEmptyString(calc["description"], field_path="item.description", scenario=scenario)
 
 
-def assert_field_item_formula(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_formula(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     formula_calcs = [c for c in evidence["intermediate_calculations"] if "formula" in c]
-    assert formula_calcs, (
-        f"Scenario {scenario}: expected at least one calculation with formula"
-    )
+    assert formula_calcs, f"Scenario {scenario}: expected at least one calculation with formula"
     non_empty = [c for c in formula_calcs if c["formula"]]
     assert non_empty, f"Scenario {scenario}: expected at least one non-empty formula"
     for calc in non_empty:
-        assertNonEmptyString(
-            calc["formula"], field_path="item.formula", scenario=scenario
-        )
+        assertNonEmptyString(calc["formula"], field_path="item.formula", scenario=scenario)
 
 
-def assert_field_item_id(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_id(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertNonEmptyString(calc["id"], field_path="item.id", scenario=scenario)
         assert calc["id"].startswith("calc_")
 
 
-def assert_field_item_input_references(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_input_references(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         refs = calc["input_references"]
-        assertFieldIsType(
-            refs, list, field_path="item.input_references", scenario=scenario
-        )
+        assertFieldIsType(refs, list, field_path="item.input_references", scenario=scenario)
         for ref in refs:
             if (".properties[" in ref or ".players[" in ref) and not ref.endswith("]"):
                 base_ref = ref[: ref.index("]") + 1]
                 assertInputReferenceResolves(input_data, base_ref, scenario=scenario)
             elif ".game_state." in ref:
-                board_key = (
-                    "board_state_before"
-                    if ref.startswith("board_state_before")
-                    else "board_state_after"
-                )
+                board_key = "board_state_before" if ref.startswith("board_state_before") else "board_state_after"
                 field = ref.split(".game_state.", 1)[1]
                 assert field in input_data[board_key]["game_state"], (
                     f"Scenario {scenario}: game_state reference {ref!r} not found"
@@ -1133,16 +1024,12 @@ def assert_field_item_input_references(
                 assertInputReferenceResolves(input_data, ref, scenario=scenario)
             elif ref.startswith("trade."):
                 field = ref.removeprefix("trade.")
-                assert field in input_data["trade"], (
-                    f"Scenario {scenario}: trade reference {ref!r} not found"
-                )
+                assert field in input_data["trade"], f"Scenario {scenario}: trade reference {ref!r} not found"
             else:
                 assertInputReferenceResolves(input_data, ref, scenario=scenario)
 
 
-def assert_field_item_input_values(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_input_values(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1153,9 +1040,7 @@ def assert_field_item_input_values(
         )
 
 
-def assert_field_item_intermediate_values(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_intermediate_values(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1166,30 +1051,20 @@ def assert_field_item_intermediate_values(
         )
 
 
-def assert_field_item_limitations(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_limitations(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
-        assertFieldIsType(
-            calc["limitations"], list, field_path="item.limitations", scenario=scenario
-        )
+        assertFieldIsType(calc["limitations"], list, field_path="item.limitations", scenario=scenario)
 
 
-def assert_field_item_metadata(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_metadata(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     meta_calcs = [c for c in evidence["intermediate_calculations"] if "metadata" in c]
     for calc in meta_calcs:
-        assertFieldIsType(
-            calc["metadata"], dict, field_path="item.metadata", scenario=scenario
-        )
+        assertFieldIsType(calc["metadata"], dict, field_path="item.metadata", scenario=scenario)
 
 
-def assert_field_item_missing_inputs(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_missing_inputs(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1200,33 +1075,23 @@ def assert_field_item_missing_inputs(
         )
 
 
-def assert_field_item_procedure(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_procedure(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     proc_calcs = [c for c in evidence["intermediate_calculations"] if "procedure" in c]
-    assert proc_calcs, (
-        f"Scenario {scenario}: expected at least one calculation with procedure"
-    )
+    assert proc_calcs, f"Scenario {scenario}: expected at least one calculation with procedure"
     non_empty = [c for c in proc_calcs if c["procedure"]]
     assert non_empty, f"Scenario {scenario}: expected at least one non-empty procedure"
     for calc in non_empty:
-        assertNonEmptyString(
-            calc["procedure"], field_path="item.procedure", scenario=scenario
-        )
+        assertNonEmptyString(calc["procedure"], field_path="item.procedure", scenario=scenario)
 
 
-def assert_field_item_result(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_result(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_HOTEL)
     calc = _first_calc(evidence, "base_asset_value", side="trade", player_id="player_a")
     assertFieldEquals(calc["result"], 430, field_path="item.result", scenario=scenario)
 
 
-def assert_field_item_side(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_side(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIn(
@@ -1237,53 +1102,39 @@ def assert_field_item_side(
         )
 
 
-def assert_field_item_side_after(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_side_after(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     after = _calcs_with_side(evidence, "after")
     assert len(after) > 0
 
 
-def assert_field_item_side_before(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_side_before(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     before = _calcs_with_side(evidence, "before")
     assert len(before) > 0
 
 
-def assert_field_item_side_delta(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_side_delta(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     delta = _calcs_with_side(evidence, "delta")
     assert len(delta) > 0
 
 
-def assert_field_item_side_trade(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_side_trade(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     trade = _calcs_with_side(evidence, "trade")
     assert len(trade) > 0
 
 
-def assert_field_item_sources(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_sources(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         sources = calc.get("sources")
         if sources is not None:
-            assertFieldIsType(
-                sources, dict, field_path="item.sources", scenario=scenario
-            )
+            assertFieldIsType(sources, dict, field_path="item.sources", scenario=scenario)
 
 
-def assert_field_item_status(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_status(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIn(
@@ -1294,9 +1145,7 @@ def assert_field_item_status(
         )
 
 
-def assert_field_item_status_COMPLETE(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_status_COMPLETE(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     complete = _calcs_with_status(evidence, "COMPLETE")
     assert len(complete) > 0, f"Scenario {scenario}: expected COMPLETE calculations"
@@ -1304,39 +1153,24 @@ def assert_field_item_status_COMPLETE(
     assert counts.get("COMPLETE", 0) == 112
 
 
-def assert_field_item_status_ERROR(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_status_ERROR(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_MULTI_PARTY)
     error_calcs = _calcs_with_status(evidence, "ERROR")
     assert len(error_calcs) >= 1
     fsc = _first_calc(evidence, "final_static_classification")
-    assertFieldEquals(
-        fsc["status"], "ERROR", field_path="item.status.ERROR", scenario=scenario
-    )
+    assertFieldEquals(fsc["status"], "ERROR", field_path="item.status.ERROR", scenario=scenario)
 
 
-def assert_field_item_status_UNAVAILABLE(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_status_UNAVAILABLE(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_UNAVAILABLE)
     unavail = [
         c
         for c in evidence["intermediate_calculations"]
         if c["calculation_type"] == "monopoly_value" and c["status"] == "UNAVAILABLE"
     ]
-    assert len(unavail) >= 1, (
-        f"Scenario {scenario}: expected UNAVAILABLE monopoly_value calculations"
-    )
-    totals = [
-        c
-        for c in unavail
-        if "Total monopoly value" in c.get("description", "")
-        and c.get("side") == "after"
-    ]
-    assert len(totals) == 1, (
-        f"Scenario {scenario}: expected one after-side total monopoly_value UNAVAILABLE"
-    )
+    assert len(unavail) >= 1, f"Scenario {scenario}: expected UNAVAILABLE monopoly_value calculations"
+    totals = [c for c in unavail if "Total monopoly value" in c.get("description", "") and c.get("side") == "after"]
+    assert len(totals) == 1, f"Scenario {scenario}: expected one after-side total monopoly_value UNAVAILABLE"
     total = totals[0]
     assertFieldEquals(
         total["result"],
@@ -1352,9 +1186,7 @@ def assert_field_item_status_UNAVAILABLE(
     )
 
 
-def assert_field_item_status_PARTIAL(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_status_PARTIAL(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_PARTIAL)
     partial_totals = [
         c
@@ -1365,9 +1197,7 @@ def assert_field_item_status_PARTIAL(
         and c.get("side") == "after"
         and "player_a" in c.get("description", "")
     ]
-    assert len(partial_totals) == 1, (
-        f"Scenario {scenario}: expected one PARTIAL total monopoly_value for player_a"
-    )
+    assert len(partial_totals) == 1, f"Scenario {scenario}: expected one PARTIAL total monopoly_value for player_a"
     total = partial_totals[0]
     assertFieldEquals(
         total["result"],
@@ -1378,48 +1208,34 @@ def assert_field_item_status_PARTIAL(
     assert "rent_table:custom_beta" in total["missing_inputs"], (
         f"Scenario {scenario}: expected rent_table:custom_beta in missing_inputs"
     )
-    assert total.get("limitations"), (
-        f"Scenario {scenario}: PARTIAL total must publish limitations"
-    )
+    assert total.get("limitations"), f"Scenario {scenario}: PARTIAL total must publish limitations"
 
 
-def assert_field_item_subject(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_subject(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
-        assertFieldIsType(
-            calc["subject"], dict, field_path="item.subject", scenario=scenario
-        )
+        assertFieldIsType(calc["subject"], dict, field_path="item.subject", scenario=scenario)
 
 
-def assert_field_item_unit(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_item_unit(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         if "unit" in calc:
-            assertNonEmptyString(
-                calc["unit"], field_path="item.unit", scenario=scenario
-            )
+            assertNonEmptyString(calc["unit"], field_path="item.unit", scenario=scenario)
 
 
 def assert_field_landing_exposure_threat_property_id(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_SURVIVAL)
-    calc = _first_calc(
-        evidence, "landing_exposure", side="before", player_id="player_a"
-    )
+    calc = _first_calc(evidence, "landing_exposure", side="before", player_id="player_a")
     assertFieldEquals(
         calc["intermediate_values"]["threat_property_id"],
         "property_park_place",
         field_path="landing_exposure.threat_property_id",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 1700, field_path="landing_exposure.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 1700, field_path="landing_exposure.result", scenario=scenario)
 
 
 def assert_field_largest_threat_landing_exposure(
@@ -1433,14 +1249,10 @@ def assert_field_largest_threat_landing_exposure(
         field_path="largest_threat.landing_exposure",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 1700, field_path="largest_threat.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 1700, field_path="largest_threat.result", scenario=scenario)
 
 
-def assert_field_metadata(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_metadata(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     metadata = evidence["metadata"]
     assertFieldIsType(metadata, dict, field_path="metadata", scenario=scenario)
@@ -1475,9 +1287,7 @@ def assert_field_metadata_specification_dependencies(
 ) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     deps = evidence["metadata"]["specification_dependencies"]
-    assertFieldIsType(
-        deps, list, field_path="metadata.specification_dependencies", scenario=scenario
-    )
+    assertFieldIsType(deps, list, field_path="metadata.specification_dependencies", scenario=scenario)
     assert len(deps) >= 1
 
 
@@ -1544,21 +1354,13 @@ def assert_field_monopoly_value_total_monopoly_value(
     )
 
 
-def assert_field_mortgage_capacity_result(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_mortgage_capacity_result(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
-    calc = _first_calc(
-        evidence, "mortgage_capacity", side="before", player_id="player_a"
-    )
-    assertFieldEquals(
-        calc["result"], 390, field_path="mortgage_capacity.result", scenario=scenario
-    )
+    calc = _first_calc(evidence, "mortgage_capacity", side="before", player_id="player_a")
+    assertFieldEquals(calc["result"], 390, field_path="mortgage_capacity.result", scenario=scenario)
 
 
-def assert_field_purpose(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_purpose(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     assertNonEmptyString(evidence["purpose"], field_path="purpose", scenario=scenario)
 
@@ -1580,9 +1382,7 @@ def assert_field_railroad_value_context_multiplier(
         field_path="railroad_value.base_value",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 2340, field_path="railroad_value.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 2340, field_path="railroad_value.result", scenario=scenario)
     assert calc["result"] == 1800 * 1.3
 
 
@@ -1597,9 +1397,7 @@ def assert_field_railroad_value_railroad_count(
         field_path="railroad_value.railroad_count",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 2340, field_path="railroad_value.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 2340, field_path="railroad_value.result", scenario=scenario)
 
 
 def assert_field_repair_exposure_repair_card_scenario(
@@ -1613,9 +1411,7 @@ def assert_field_repair_exposure_repair_card_scenario(
         field_path="repair_exposure.repair_card_scenario",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], 0, field_path="repair_exposure.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], 0, field_path="repair_exposure.result", scenario=scenario)
 
 
 def assert_field_risk_margin_surplus_amount(
@@ -1635,14 +1431,10 @@ def assert_field_risk_margin_surplus_amount(
         field_path="risk_margin.deficit_amount",
         scenario=scenario,
     )
-    assertFieldEquals(
-        calc["result"], -1600, field_path="risk_margin.result", scenario=scenario
-    )
+    assertFieldEquals(calc["result"], -1600, field_path="risk_margin.result", scenario=scenario)
 
 
-def assert_field_sources(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_sources(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_CUSTOM_STREET)
     found_labels: set[str] = set()
     for calc in evidence["intermediate_calculations"]:
@@ -1653,13 +1445,9 @@ def assert_field_sources(
         assert label in SOURCE_LABELS or label == "UNAVAILABLE"
 
 
-def assert_field_statistics(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_statistics(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
-    assertFieldIsType(
-        evidence["statistics"], dict, field_path="statistics", scenario=scenario
-    )
+    assertFieldIsType(evidence["statistics"], dict, field_path="statistics", scenario=scenario)
 
 
 def assert_field_statistics_calculation_count(
@@ -1678,9 +1466,7 @@ def assert_field_strategic_opportunity_score_criteria(
     evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
 ) -> None:
     _require_scenario(scenario, SCENARIO_BLOCKING)
-    calc = _first_calc(
-        evidence, "strategic_opportunity_score", side="after", player_id="player_a"
-    )
+    calc = _first_calc(evidence, "strategic_opportunity_score", side="after", player_id="player_a")
     criteria = calc["intermediate_values"]["criteria"]
     assertFieldIsType(
         criteria,
@@ -1730,9 +1516,7 @@ def assert_field_strategic_value_floor_applied(
     _require_scenario(scenario, SCENARIO_BALANCED)
     calc = _first_calc(evidence, "strategic_value", side="trade", player_id="player_a")
     value = calc["intermediate_values"]["floor_applied"]
-    assertFieldIsType(
-        value, bool, field_path="strategic_value.floor_applied", scenario=scenario
-    )
+    assertFieldIsType(value, bool, field_path="strategic_value.floor_applied", scenario=scenario)
 
 
 def assert_field_strategic_value_house_control_bonus(
@@ -1819,9 +1603,7 @@ def assert_field_strategic_value_strategic_opportunity_value(
     )
 
 
-def assert_field_subject_group_ids(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_subject_group_ids(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1832,9 +1614,7 @@ def assert_field_subject_group_ids(
         )
 
 
-def assert_field_subject_player_ids(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_subject_player_ids(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1845,9 +1625,7 @@ def assert_field_subject_player_ids(
         )
 
 
-def assert_field_subject_property_ids(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_subject_property_ids(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(
@@ -1858,24 +1636,16 @@ def assert_field_subject_property_ids(
         )
 
 
-def assert_field_subject_trade_id(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_subject_trade_id(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     trade_calcs = _calcs_with_side(evidence, "trade")
-    trade_ids = [
-        c["subject"]["trade_id"] for c in trade_calcs if c["subject"].get("trade_id")
-    ]
-    assert trade_ids, (
-        f"Scenario {scenario}: expected at least one trade calculation with trade_id"
-    )
+    trade_ids = [c["subject"]["trade_id"] for c in trade_calcs if c["subject"].get("trade_id")]
+    assert trade_ids, f"Scenario {scenario}: expected at least one trade calculation with trade_id"
     for trade_id in trade_ids:
         assertNonEmptyString(trade_id, field_path="subject.trade_id", scenario=scenario)
 
 
-def assert_field_subject_transfer_ids(
-    evidence: dict[str, Any], input_data: dict[str, Any], scenario: str
-) -> None:
+def assert_field_subject_transfer_ids(evidence: dict[str, Any], input_data: dict[str, Any], scenario: str) -> None:
     _require_scenario(scenario, SCENARIO_BALANCED)
     for calc in evidence["intermediate_calculations"]:
         assertFieldIsType(

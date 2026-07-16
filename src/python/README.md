@@ -2,11 +2,11 @@
 
 Reference implementation of the deterministic Static Trade Imbalance Evaluator defined by the repository specifications.
 
-The implementation executes only the Static Evaluator. It does not execute the Judge, infer player intent, perform moderation, or consume Strategy Knowledge or Player Profiles.
+The implementation includes the deterministic Static Evaluator and the LLM Judge module (`LlmEvaluation`). The Static Evaluator does not infer player intent or perform moderation. The Judge module orchestrates strategic evaluation via platform-agnostic LLM ports.
 
 Normative documentation is authoritative. When implementation and specification disagree, the specification is correct.
 
-**Repository version:** 1.1.0 — see [CHANGELOG](../../CHANGELOG.md).
+**Repository version:** 1.2.0 — see [CHANGELOG](../../CHANGELOG.md).
 
 ---
 
@@ -18,6 +18,8 @@ Normative documentation is authoritative. When implementation and specification 
 - [Input Specification](../../docs/llm_evaluator/02_input_specification.md)
 - [Input Schema](../../docs/llm_evaluator/03_input_schema.md)
 - [Static Algorithm Evidence Specification](../../docs/llm_evaluator/04_static_algorithm_specification.md)
+- [Initial Prompt](../../docs/llm_evaluator/00_initial_prompt.md)
+- [File Attachment Standard](../../docs/llm_platform/file_attachment_standard.md)
 
 ---
 
@@ -25,9 +27,11 @@ Normative documentation is authoritative. When implementation and specification 
 
 The Python project receives canonical evaluation input and returns complete Static Algorithm Evidence.
 
-**In scope:** deterministic static algorithm execution, evidence generation, input validation, JSON mapping.
+**Static Evaluator in scope:** deterministic static algorithm execution, evidence generation, input validation, JSON mapping.
 
-**Out of scope:** LLM Judge interpretation, competitive classification reasoning, player profiles, external platform integration.
+**LLM Judge in scope (`LlmEvaluation`):** deterministic pre-LLM mode resolution, specification bundles, `LlmRequest` with instruction/attachment **file paths**, client-side prompt assembly, provider-neutral `LlmClient` port, Cursor adapter (opt-in), JSON mapping, validation, and repair.
+
+**Out of scope:** Player profile evaluator, production deployment of non-Cursor providers (stubs only in v1.2.0).
 
 ---
 
@@ -130,6 +134,49 @@ EvidenceSerializer.toDict()
 The evaluator is abstracted so alternative implementations could be injected without changing application orchestration.
 
 The domain and application layers do not import HTTP, CLI, messaging, or web-framework modules. The `QueryBus` lives in `Shared/Domain/Bus/` as an in-process dispatch mechanism only; it is not a network protocol.
+
+### LLM Judge (`LlmEvaluation/`)
+
+Independent vertical slice with **zero imports** from `StaticEvaluation` domain/application code.
+
+```text
+JudgeEvaluationRequest (evaluation_input + llm_execution)
+    ↓
+EvaluateTradeWithJudgeService
+    ↓ deterministic pre-LLM resolution
+StaticAnalysisModeResolver → SpecificationBundleBuilder → JudgePromptBuilder → LlmRequest (paths)
+    ↓
+LlmClient.complete(LlmRequest)     ← loads paths, delivers file content
+    ↓
+LlmPromptAssembler + CursorLlmClient (v1.2.0) or FakeLlmClient (tests)
+    ↓ Cursor transport normalization (Infrastructure/Cursor only)
+JudgeResponseParser → JudgeOutputValidator → JudgeOutput (7 sections)
+    ↓ (LLM_STATIC_FALLBACK)
+GeneratedStaticAlgorithmEvidenceValidator — rejects schema-invalid fallback evidence
+```
+
+**Deterministic preflight:** before the LLM call, `StaticAnalysisModeResolver` and `SuppliedEvidenceValidator` apply the Static Analysis Resolution rules from `01_judge.md` (evidence usability, fallback eligibility, runtime mode). The task prompt carries the resolved context; `JudgeOutputValidator` rejects LLM output that disagrees with that preflight plan.
+
+**Schema validation:** `GeneratedStaticAlgorithmEvidenceValidator` validates fallback-generated evidence; the same validator is used by `SuppliedEvidenceValidator` for supplied evidence classification. Malformed fallback evidence cannot be paired with `execution_status = COMPLETE`.
+
+**Deferred (not wired in 1.2.0):** `SemanticResponseAssessor` / `LlmSemanticResponseAssessor` — port exists for optional future integration-test semantic review; not used in the current test suite. Reserved `.env` keys `CURSOR_ASSESSOR_MODEL` and `LLM_REQUEST_TIMEOUT_SECONDS` are commented out in `.env.example`.
+
+**Specification delivery:** `JudgePromptBuilder` builds `LlmRequest` with paths only — no inlined specification bodies:
+
+| Field | Content |
+|-------|---------|
+| `instructionFilePaths` | e.g. `00_initial_prompt.md`, `file_attachment_standard.md` (+ optional platform docs) |
+| `attachmentFilePaths` | all `docs/llm_evaluator/` files except those in `instructionFilePaths`, plus all `docs/static_evaluator/` files when `bundleRequired` is true |
+| `taskPrompt` | evaluation context, input JSON, delivery manifest |
+| `specificationBundle` | file bytes for attachment paths |
+
+Each **`LlmClient`** loads those paths and delivers content. `LlmPromptAssembler` + `CursorLlmClient` assemble one combined prompt with inline headers for the Cursor API, append a Cursor-specific transport instruction, and normalize Cursor responses into canonical `LlmResponse.rawText` before Judge parsing. See [docs/llm_platform/](../../docs/llm_platform/) and [Cursor transport docs](../../docs/llm_platform/cursor/README.md).
+
+**Static bundle trigger:** `docs/static_evaluator/` files attach only when preflight resolves `execution_mode = LLM_STATIC_FALLBACK` (`bundleRequired = true`). Fallback configured or authorized in input alone does not attach static specifications.
+
+**Providers:** `cursor` (implemented); `claude`, `gemini`, `grok`, `openai` (stubs).
+
+**Integration tests:** run when `CURSOR_API_KEY` is configured. The reference implementation and pytest load repository root `.env` automatically (`Monopoly.Shared.Infrastructure.EnvironmentLoader`). Process environment variables take precedence over `.env`. Tests skip only when the key is genuinely unavailable. Live integration tests live under `test/python/integration/LlmEvaluation/Infrastructure/Cursor/`. `CURSOR_JUDGE_MODEL` in `.env` selects the model for those tests only; production requests supply the model through `llm_execution.model`. All tests under `test/python/**/LlmEvaluation/` mirror their pytest path under [`artifact/`](../../artifact/) (gitignored). The session clears `artifact/` once at startup; set `MONOPOLY_KEEP_ARTIFACTS=1` to preserve contents between runs. Request artifacts record instruction paths, attachment paths, manifest paths, and content hashes (no credentials). Sanitized Cursor transport diagnostics may include `provider_transport_diagnostics.json` and `initial_provider_response.txt`; these are provider transport records, not canonical Judge output.
 
 ---
 
@@ -339,13 +386,34 @@ src/python/
         └── Infrastructure/Json/
             ├── EvaluationInputMapper.py
             └── EvidenceSerializer.py
+    └── LlmEvaluation/
+        ├── Application/                      # EvaluateTradeWithJudgeService, Query/Handler
+        ├── Domain/                           # Judge models, services, ports, attachment envelope
+        └── Infrastructure/
+            ├── Artifact/                     # JudgeArtifactWriter (sanitized diagnostics)
+            ├── Cursor/                       # Cursor SDK adapter and transport normalization
+            │   ├── CursorLlmClient.py
+            │   ├── CursorTransportInstruction.py
+            │   ├── CursorTransportEnvelopeParser.py
+            │   ├── CursorTransportNormalizer.py
+            │   ├── CursorExecutionWorkspace.py
+            │   ├── CursorWorkspacePathResolver.py
+            │   ├── CursorFileRetriever.py
+            │   ├── CursorTransportDiagnostics.py
+            │   └── CursorLegacyProseRecovery.py   # experimental compatibility only
+            ├── Json/                         # Judge request/output mappers
+            └── Specification/                # FileSystemSpecificationRepository, LlmPromptAssembler
 
 test/python/
 ├── fixtures/
 │   ├── fixtureLoader.py                      # Canonical JSON loader
 │   ├── scenarioInputs.py                     # Named scenario loader functions
 │   ├── boardBuilders.py                      # Authoring utilities (not scenario source of truth)
+│   ├── llm_evaluation/                       # Shared Judge scenario registry and LLM fixtures
 │   └── inputs/                               # Committed JSON scenarios
+├── integration/
+│   └── LlmEvaluation/
+│       └── Infrastructure/Cursor/            # Opt-in live Cursor integration tests
 ├── unit/
 │   ├── static_evaluator/evaluate_trade_service/
 │   │   ├── conftest.py                       # evaluate_trade_service fixture
@@ -355,16 +423,25 @@ test/python/
 │   │   ├── test_automatic_flags.py           # Automatic flag family
 │   │   ├── test_final_classification.py      # Classification family
 │   │   ├── assertions/                       # Shared evidence and scenario helpers
-│   │   └── output_fields/                    # Field-level output coverage (135 fields)
+│   │   └── output_fields/                    # Field-level output coverage (136 evidence fields)
+│   ├── LlmEvaluation/                          # Mirrors production Application/Domain/Infrastructure
+│   │   ├── Application/Service/EvaluateTradeWithJudgeService/
+│   │   ├── Domain/Service/
+│   │   └── Infrastructure/Cursor/              # Cursor transport unit tests
 │   └── test_utilities/
 │       ├── evidence_contract.py              # Contract validation utilities
 │       ├── dependency_graph.py               # Dependency graph utilities
+│       ├── repo_paths.py                     # Shared REPO_ROOT and FIXTURE_ROOT
 │       └── fixture_loader/                   # Loader infrastructure tests
 └── functional/
-    └── static_evaluator/evaluate_trade_query/
-        ├── conftest.py                       # query_bus fixture
-        └── test_scenario_expectations.py     # CQRS scenario tests
+    ├── static_evaluator/evaluate_trade_query/
+    │   ├── conftest.py                       # query_bus fixture
+    │   └── test_scenario_expectations.py     # CQRS scenario tests
+    └── LlmEvaluation/Application/Query/EvaluateTradeWithJudge/
+        └── test_query_bus_scenarios.py       # Judge CQRS runtime-mode tests
 ```
+
+Unit tests for the LLM Judge live under `test/python/unit/LlmEvaluation/` mirroring `Monopoly/LlmEvaluation/{Application,Domain,Infrastructure}/`. Opt-in Cursor integration tests live under `test/python/integration/LlmEvaluation/Infrastructure/Cursor/`. Cursor transport unit tests live under `test/python/unit/LlmEvaluation/Infrastructure/Cursor/`.
 
 Unit test directories mirror the application service under test. Multiple focused suites live under `evaluate_trade_service/`.
 
@@ -413,7 +490,9 @@ Rules:
 | `test_automatic_flags.py` | Automatic flag rules |
 | `test_final_classification.py` | Final classification boundaries |
 
-**Output-field coverage:** 136 canonical evidence fields mapped to focused unit tests via `output_fields/` (25 category modules). Registry: `output_field_coverage.py`; matrix: `OUTPUT_COVERAGE_MATRIX.md`; guard: `test_output_field_coverage_guard.py`. Each field is classified as **SEMANTIC** (independently derived expected value) or **STRUCTURAL** (type/presence invariant). Critical high-trust fields must be semantic. Covers envelope fields, calculation-item fields, every registered calculation type, all four statuses (`COMPLETE`, `PARTIAL`, `UNAVAILABLE`, `ERROR`), sides, subjects, input references, sources, intermediate values, results, dependencies, final conclusions, metadata, and statistics.
+**Output-field coverage:** 136 canonical Static Algorithm Evidence fields mapped to focused unit tests via `output_fields/` (25 category modules). Registry: `output_field_coverage.py`; matrix: `OUTPUT_COVERAGE_MATRIX.md`; guard: `test_output_field_coverage_guard.py`. Each field is classified as **SEMANTIC** (independently derived expected value) or **STRUCTURAL** (type/presence invariant). Critical high-trust fields must be semantic. Covers envelope fields, calculation-item fields, every registered calculation type, all four statuses (`COMPLETE`, `PARTIAL`, `UNAVAILABLE`, `ERROR`), sides, subjects, input references, sources, intermediate values, results, dependencies, final conclusions, metadata, and statistics.
+
+**LLM Judge output schema coverage:** the Judge guard in `test/python/unit/LlmEvaluation/Application/Service/EvaluateTradeWithJudgeService/test_output_field_coverage_guard.py` verifies the seven required top-level sections and **40 canonical section fields** from `06_output_schema.md` (not the 136 Static Algorithm Evidence fields). Structural validation rejects unknown top-level keys. Fallback-generated evidence inside `static_analysis_result.generated_static_algorithm_evidence` is validated separately by `GeneratedStaticAlgorithmEvidenceValidator`.
 
 **Evidence contract tests:** `test_evidence_contract.py` enforces deterministic serialized output, JSON serialization, dependency-graph validity, and canonical Trade Ratio keys through the application service.
 
@@ -431,11 +510,13 @@ Existing scenarios are reused across multiple field tests. New scenarios are add
 
 `test/python/functional/static_evaluator/evaluate_trade_query/test_scenario_expectations.py` dispatches `EvaluateTradeQuery` via `createQueryBus()`. Each scenario verifies one meaningful public result (classification, flags, or degraded/error behavior). Functional tests do not duplicate field-level assertions.
 
-### No Integration Tests
+### No Static Evaluator Integration Tests
 
-There are currently no integration tests because there are no real external integrations or delivery adapters (no database, HTTP server, message broker, or production filesystem boundary). The in-process `QueryBus` and JSON fixture loader are not external integrations.
+The Static Evaluator has no external integration tests (no database, HTTP server, or message broker). The in-process `QueryBus` and JSON fixture loader are not external integrations.
 
-When an HTTP service, database, message broker, or other real boundary is added, integration tests (or functional delivery tests, depending on classification) can verify request/response mapping, routing, status codes, protocol serialization, and middleware for that concrete adapter. None of those tests exist today.
+### LLM Judge Integration Tests
+
+Opt-in Cursor integration tests live under `test/python/integration/LlmEvaluation/Infrastructure/Cursor/`. They run when `CURSOR_API_KEY` is configured in repository root `.env` or the process environment. See [Cursor transport documentation](../../docs/llm_platform/cursor/README.md) and the **LLM Judge** section above.
 
 ### Future delivery-layer tests (not implemented)
 
@@ -536,8 +617,8 @@ Python version: **3.12** reference; **3.10+** supported.
 
 | Concept | Value |
 |---------|-------|
-| Repository version | `1.1.0` |
-| Python package version (`pyproject.toml`) | `1.1.0` |
+| Repository version | `1.2.0` |
+| Python package version (`pyproject.toml`) | `1.2.0` |
 | Static Algorithm specification version | `1.0` |
 | Risk Reference specification version | `1.0` |
 | Evidence `algorithm_version` in output | `1.0` |

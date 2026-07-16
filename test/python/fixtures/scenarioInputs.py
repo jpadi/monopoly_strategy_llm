@@ -15,8 +15,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fixtures.fixtureLoader import loadScenarioInput, loadRawScenarioInput
-
+from fixtures.fixtureLoader import loadRawScenarioInput, loadScenarioInput
 
 # ──────────────────────────────────────────────────────────────
 # Trade Ratio Boundary Scenarios (Section 9)
@@ -763,9 +762,7 @@ def initiatorIsApparentOverpayerInput() -> dict[str, Any]:
     Expected:
     - Initiator adjustment may remove SUSPICIOUS_IMBALANCE
     """
-    return loadScenarioInput(
-        "initiator_adjustment/initiator_is_apparent_overpayer.json"
-    )
+    return loadScenarioInput("initiator_adjustment/initiator_is_apparent_overpayer.json")
 
 
 def initiatorIsNotApparentOverpayerInput() -> dict[str, Any]:
@@ -777,9 +774,7 @@ def initiatorIsNotApparentOverpayerInput() -> dict[str, Any]:
     - Initiator adjustment does NOT apply
     - Flags remain if threshold is met
     """
-    return loadScenarioInput(
-        "initiator_adjustment/initiator_is_not_apparent_overpayer.json"
-    )
+    return loadScenarioInput("initiator_adjustment/initiator_is_not_apparent_overpayer.json")
 
 
 # ──────────────────────────────────────────────────────────────

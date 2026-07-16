@@ -5,28 +5,24 @@ from __future__ import annotations
 from fixtures import scenarioInputs
 
 from .assertions.evidence_assertions import (
-    assertValidEvidenceEnvelope,
-    assertTradeRatio,
-    assertFlagAbsent,
     assertCalculationExists,
+    assertFlagAbsent,
+    assertTradeRatio,
+    assertValidEvidenceEnvelope,
 )
 
 
 class TestTradeRatioBelowThresholds:
     """Tests for ratios below flag thresholds."""
 
-    def test_perfectly_balanced_trade_produces_low_ratio(
-        self, execute_scenario
-    ) -> None:
+    def test_perfectly_balanced_trade_produces_low_ratio(self, execute_scenario) -> None:
         input_data = scenarioInputs.perfectlyBalancedPrintedValueSwapInput()
         evidence = execute_scenario(input_data)
         assertValidEvidenceEnvelope(evidence)
         assertTradeRatio(evidence, max_published=2.0)
         assertFlagAbsent(evidence, "SUSPICIOUS_IMBALANCE")
 
-    def test_ratio_just_below_two_has_no_suspicious_flag(
-        self, execute_scenario
-    ) -> None:
+    def test_ratio_just_below_two_has_no_suspicious_flag(self, execute_scenario) -> None:
         input_data = scenarioInputs.ratioJustBelowTwoInput()
         evidence = execute_scenario(input_data)
         assertTradeRatio(evidence, max_published=2.0)
@@ -36,9 +32,7 @@ class TestTradeRatioBelowThresholds:
 class TestTradeRatioAtThresholds:
     """Tests for ratios at flag thresholds."""
 
-    def test_ratio_exactly_three_at_suspicious_threshold(
-        self, execute_scenario
-    ) -> None:
+    def test_ratio_exactly_three_at_suspicious_threshold(self, execute_scenario) -> None:
         input_data = scenarioInputs.ratioExactlyThreeInput()
         evidence = execute_scenario(input_data)
         assertTradeRatio(evidence, min_published=3.0)
@@ -52,9 +46,7 @@ class TestTradeRatioAtThresholds:
 class TestTradeRatioEdgeCases:
     """Tests for edge cases in trade ratio calculation."""
 
-    def test_both_strategic_values_zero_produces_finite_ratio(
-        self, execute_scenario
-    ) -> None:
+    def test_both_strategic_values_zero_produces_finite_ratio(self, execute_scenario) -> None:
         input_data = scenarioInputs.bothStrategicValuesZeroInput()
         evidence = execute_scenario(input_data)
         assertValidEvidenceEnvelope(evidence)

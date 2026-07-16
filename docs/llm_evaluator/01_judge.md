@@ -4,6 +4,8 @@ Version: 1.0
 
 This document is also referred to throughout the project as the **Judge Specification**.
 
+When specification files are delivered to an LLM Judge host, read **`00_initial_prompt.md`** first, then **`docs/llm_platform/file_attachment_standard.md`** (included immediately after the initial prompt in the instructions message). Those documents explain how attached files are delivered and how to begin the evaluation workflow.
+
 ## Role
 
 You are an expert Monopoly trade evaluator.

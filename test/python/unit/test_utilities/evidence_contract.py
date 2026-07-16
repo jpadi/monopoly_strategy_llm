@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 VALID_STATUSES = frozenset({"COMPLETE", "PARTIAL", "UNAVAILABLE", "ERROR"})
 VALID_SIDES = frozenset({"before", "after", "delta", "trade"})
 
@@ -32,9 +31,7 @@ REGISTERED_CALCULATION_TYPES = frozenset(
         "available_construction_budget",
         "development_capability",
         "monopoly_value",
-        "house_control",
         "house_control_bonus",
-        "house_denial",
         "house_denial_bonus",
         "railroad_value",
         "blocking_value",
@@ -94,23 +91,17 @@ def assertValidCalculationItem(item: dict[str, Any], context: str = "") -> None:
 
     # Input references and values
     assert "input_references" in item, f"{prefix}Missing 'input_references'"
-    assert isinstance(item["input_references"], list), (
-        f"{prefix}'input_references' must be list"
-    )
+    assert isinstance(item["input_references"], list), f"{prefix}'input_references' must be list"
 
     assert "input_values" in item, f"{prefix}Missing 'input_values'"
-    assert isinstance(item["input_values"], dict), (
-        f"{prefix}'input_values' must be dict"
-    )
+    assert isinstance(item["input_values"], dict), f"{prefix}'input_values' must be dict"
 
     assert "sources" in item, f"{prefix}Missing 'sources'"
     assert isinstance(item["sources"], dict), f"{prefix}'sources' must be dict"
 
     # Intermediate values and result
     assert "intermediate_values" in item, f"{prefix}Missing 'intermediate_values'"
-    assert isinstance(item["intermediate_values"], dict), (
-        f"{prefix}'intermediate_values' must be dict"
-    )
+    assert isinstance(item["intermediate_values"], dict), f"{prefix}'intermediate_values' must be dict"
 
     assert "result" in item, f"{prefix}Missing 'result'"
 
@@ -119,18 +110,14 @@ def assertValidCalculationItem(item: dict[str, Any], context: str = "") -> None:
     assert isinstance(item["limitations"], list), f"{prefix}'limitations' must be list"
 
     assert "missing_inputs" in item, f"{prefix}Missing 'missing_inputs'"
-    assert isinstance(item["missing_inputs"], list), (
-        f"{prefix}'missing_inputs' must be list"
-    )
+    assert isinstance(item["missing_inputs"], list), f"{prefix}'missing_inputs' must be list"
 
     # Status-specific validation
     status = item["status"]
     if status == "COMPLETE":
         # Some calculations like bonuses may legitimately have null/zero results
         # when no bonus applies, so we don't require non-null result
-        assert len(item["missing_inputs"]) == 0, (
-            f"{prefix}COMPLETE calculation must have empty missing_inputs"
-        )
+        assert len(item["missing_inputs"]) == 0, f"{prefix}COMPLETE calculation must have empty missing_inputs"
 
     elif status in ("PARTIAL", "UNAVAILABLE"):
         assert len(item["missing_inputs"]) > 0 or len(item["limitations"]) > 0, (
@@ -138,9 +125,7 @@ def assertValidCalculationItem(item: dict[str, Any], context: str = "") -> None:
         )
 
     elif status == "ERROR":
-        assert len(item["limitations"]) > 0, (
-            f"{prefix}ERROR calculation must identify error in limitations"
-        )
+        assert len(item["limitations"]) > 0, f"{prefix}ERROR calculation must identify error in limitations"
 
 
 def assertValidEvidenceObject(evidence: dict[str, Any]) -> None:
@@ -152,17 +137,13 @@ def assertValidEvidenceObject(evidence: dict[str, Any]) -> None:
     # Top-level required fields
     assert "id" in evidence, "Missing evidence 'id'"
     assert "algorithm_id" in evidence, "Missing 'algorithm_id'"
-    assert evidence["algorithm_id"] == "monopoly_static_algorithm", (
-        f"Invalid algorithm_id: {evidence['algorithm_id']}"
-    )
+    assert evidence["algorithm_id"] == "monopoly_static_algorithm", f"Invalid algorithm_id: {evidence['algorithm_id']}"
 
     assert "algorithm_name" in evidence, "Missing 'algorithm_name'"
     assert "algorithm_version" in evidence, "Missing 'algorithm_version'"
 
     assert "purpose" in evidence, "Missing 'purpose'"
-    assert "intermediate_calculations" in evidence, (
-        "Missing 'intermediate_calculations'"
-    )
+    assert "intermediate_calculations" in evidence, "Missing 'intermediate_calculations'"
     assert "final_conclusions" in evidence, "Missing 'final_conclusions'"
     assert "metadata" in evidence, "Missing 'metadata'"
     assert "statistics" in evidence, "Missing 'statistics'"
@@ -170,9 +151,7 @@ def assertValidEvidenceObject(evidence: dict[str, Any]) -> None:
     # Validate metadata
     metadata = evidence["metadata"]
     assert "implementation_overrides" in metadata, "Missing 'implementation_overrides'"
-    assert "specification_dependencies" in metadata, (
-        "Missing 'specification_dependencies'"
-    )
+    assert "specification_dependencies" in metadata, "Missing 'specification_dependencies'"
 
     # Validate all calculation items
     calcs = evidence["intermediate_calculations"]
@@ -235,8 +214,7 @@ def assertAllCalculationsComplete(
         if calc["calculation_type"] in exclude:
             continue
         assert calc["status"] == "COMPLETE", (
-            f"Calculation {calc['id']} ({calc['calculation_type']}) "
-            f"has status {calc['status']}, expected COMPLETE"
+            f"Calculation {calc['id']} ({calc['calculation_type']}) has status {calc['status']}, expected COMPLETE"
         )
 
 
@@ -253,11 +231,7 @@ def getCalculationsByType(
     Returns:
         List of matching calculations
     """
-    return [
-        c
-        for c in evidence["intermediate_calculations"]
-        if c["calculation_type"] == calculation_type
-    ]
+    return [c for c in evidence["intermediate_calculations"] if c["calculation_type"] == calculation_type]
 
 
 def getCalculationById(

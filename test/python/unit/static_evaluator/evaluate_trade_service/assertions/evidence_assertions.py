@@ -14,25 +14,19 @@ def assertValidEvidenceEnvelope(evidence: dict[str, Any]) -> None:
     """Assert the evidence envelope has all required top-level fields."""
     assert "id" in evidence, "Missing evidence 'id'"
     assert "algorithm_id" in evidence, "Missing 'algorithm_id'"
-    assert evidence["algorithm_id"] == "monopoly_static_algorithm", (
-        f"Invalid algorithm_id: {evidence['algorithm_id']}"
-    )
+    assert evidence["algorithm_id"] == "monopoly_static_algorithm", f"Invalid algorithm_id: {evidence['algorithm_id']}"
 
     assert "algorithm_name" in evidence, "Missing 'algorithm_name'"
     assert "algorithm_version" in evidence, "Missing 'algorithm_version'"
     assert "purpose" in evidence, "Missing 'purpose'"
-    assert "intermediate_calculations" in evidence, (
-        "Missing 'intermediate_calculations'"
-    )
+    assert "intermediate_calculations" in evidence, "Missing 'intermediate_calculations'"
     assert "final_conclusions" in evidence, "Missing 'final_conclusions'"
     assert "metadata" in evidence, "Missing 'metadata'"
     assert "statistics" in evidence, "Missing 'statistics'"
 
     metadata = evidence["metadata"]
     assert "implementation_overrides" in metadata, "Missing 'implementation_overrides'"
-    assert "specification_dependencies" in metadata, (
-        "Missing 'specification_dependencies'"
-    )
+    assert "specification_dependencies" in metadata, "Missing 'specification_dependencies'"
 
     assert isinstance(evidence["intermediate_calculations"], list)
     assert len(evidence["intermediate_calculations"]) > 0
@@ -81,27 +75,19 @@ def assertTradeRatio(
     published = intermediate.get("published_trade_ratio")
 
     assert raw is not None, "trade_ratio missing intermediate_values.raw_trade_ratio"
-    assert published is not None, (
-        "trade_ratio missing intermediate_values.published_trade_ratio"
-    )
+    assert published is not None, "trade_ratio missing intermediate_values.published_trade_ratio"
 
     if expected_raw is not None:
         assert raw == expected_raw, f"Raw ratio: expected {expected_raw}, got {raw}"
 
     if expected_published is not None:
-        assert published == expected_published, (
-            f"Published ratio: expected {expected_published}, got {published}"
-        )
+        assert published == expected_published, f"Published ratio: expected {expected_published}, got {published}"
 
     if min_published is not None:
-        assert published >= min_published, (
-            f"Published ratio: expected >= {min_published}, got {published}"
-        )
+        assert published >= min_published, f"Published ratio: expected >= {min_published}, got {published}"
 
     if max_published is not None:
-        assert published <= max_published, (
-            f"Published ratio: expected <= {max_published}, got {published}"
-        )
+        assert published <= max_published, f"Published ratio: expected <= {max_published}, got {published}"
 
 
 def _getFlagsList(evidence: dict[str, Any]) -> list[str]:
@@ -122,9 +108,7 @@ def assertFlagPresent(evidence: dict[str, Any], flag: str) -> None:
 def assertFlagAbsent(evidence: dict[str, Any], flag: str) -> None:
     """Assert a flag is NOT present in final conclusions."""
     flags = _getFlagsList(evidence)
-    assert flag not in flags, (
-        f"Flag '{flag}' should not be present. Actual flags: {flags}"
-    )
+    assert flag not in flags, f"Flag '{flag}' should not be present. Actual flags: {flags}"
 
 
 def assertFinalClassification(evidence: dict[str, Any], expected: str) -> None:
@@ -142,18 +126,14 @@ def assertRiskLabel(
     side: str = "after",
 ) -> None:
     """Assert a player's risk label."""
-    calc = assertCalculationExists(
-        evidence, "immediate_risk", side=side, player_id=player_id
-    )
+    calc = assertCalculationExists(evidence, "immediate_risk", side=side, player_id=player_id)
     result = calc.get("result", {})
     actual = result.get("risk_label") if isinstance(result, dict) else None
 
     if actual is None:
         actual = calc.get("intermediate_values", {}).get("risk_label")
 
-    assert actual == expected_label, (
-        f"Risk label for {player_id}: expected {expected_label}, got {actual}"
-    )
+    assert actual == expected_label, f"Risk label for {player_id}: expected {expected_label}, got {actual}"
 
 
 def assertRiskWarningPresent(
@@ -164,18 +144,14 @@ def assertRiskWarningPresent(
     side: str = "after",
 ) -> None:
     """Assert a risk warning is present for a player."""
-    calc = assertCalculationExists(
-        evidence, "immediate_risk", side=side, player_id=player_id
-    )
+    calc = assertCalculationExists(evidence, "immediate_risk", side=side, player_id=player_id)
     result = calc.get("result", {})
     warnings = result.get("warnings", []) if isinstance(result, dict) else []
 
     if not warnings:
         warnings = calc.get("intermediate_values", {}).get("warnings", [])
 
-    assert warning in warnings, (
-        f"Warning '{warning}' not found for {player_id}. Actual: {warnings}"
-    )
+    assert warning in warnings, f"Warning '{warning}' not found for {player_id}. Actual: {warnings}"
 
 
 def assertJsonSerializable(evidence: dict[str, Any]) -> None:
@@ -198,9 +174,7 @@ def assertJsonSerializable(evidence: dict[str, Any]) -> None:
         "object at 0x",
     ]
     for pattern in forbidden_patterns:
-        assert pattern not in serialized, (
-            f"Python-specific pattern found in JSON: {pattern}"
-        )
+        assert pattern not in serialized, f"Python-specific pattern found in JSON: {pattern}"
 
 
 def assertDeterministicIds(evidence: dict[str, Any]) -> None:
@@ -209,9 +183,7 @@ def assertDeterministicIds(evidence: dict[str, Any]) -> None:
     assert len(calc_ids) == len(set(calc_ids)), "Duplicate calculation IDs found"
 
     for calc_id in calc_ids:
-        assert calc_id.startswith("calc_"), (
-            f"Calculation ID should start with 'calc_': {calc_id}"
-        )
+        assert calc_id.startswith("calc_"), f"Calculation ID should start with 'calc_': {calc_id}"
 
 
 def assertValidDependencyGraph(evidence: dict[str, Any]) -> None:
@@ -223,9 +195,7 @@ def assertValidDependencyGraph(evidence: dict[str, Any]) -> None:
         deps = calc.get("dependent_calculation_ids", [])
         assert calc_id not in deps, f"Self-dependency in {calc_id}"
         for dep_id in deps:
-            assert dep_id in all_ids, (
-                f"Calculation {calc_id} references non-existent: {dep_id}"
-            )
+            assert dep_id in all_ids, f"Calculation {calc_id} references non-existent: {dep_id}"
 
 
 def assertStrategicValueComponentsExist(evidence: dict[str, Any]) -> None:
@@ -241,20 +211,10 @@ def assertStrategicValueComponentsExist(evidence: dict[str, Any]) -> None:
     ]
 
     for component in components:
-        calcs = [
-            c
-            for c in evidence["intermediate_calculations"]
-            if c["calculation_type"] == component
-        ]
+        calcs = [c for c in evidence["intermediate_calculations"] if c["calculation_type"] == component]
         assert len(calcs) > 0, f"Missing calculation type: {component}"
 
 
-def getCalculationsByType(
-    evidence: dict[str, Any], calculation_type: str
-) -> list[dict[str, Any]]:
+def getCalculationsByType(evidence: dict[str, Any], calculation_type: str) -> list[dict[str, Any]]:
     """Get all calculations of a specific type."""
-    return [
-        c
-        for c in evidence["intermediate_calculations"]
-        if c["calculation_type"] == calculation_type
-    ]
+    return [c for c in evidence["intermediate_calculations"] if c["calculation_type"] == calculation_type]

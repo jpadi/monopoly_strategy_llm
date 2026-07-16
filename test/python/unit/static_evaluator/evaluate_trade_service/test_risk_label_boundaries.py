@@ -7,7 +7,6 @@ from fixtures import scenarioInputs
 
 from .assertions.evidence_assertions import assertCalculationExists
 
-
 RISK_LABEL_SCENARIOS = [
     pytest.param(
         scenarioInputs.survivalRiskCriticalInput,
@@ -40,9 +39,7 @@ RISK_LABEL_SCENARIOS = [
     ("input_fn", "side", "expected_label"),
     RISK_LABEL_SCENARIOS,
 )
-def test_risk_label_tier(
-    execute_scenario, input_fn, side: str, expected_label: str
-) -> None:
+def test_risk_label_tier(execute_scenario, input_fn, side: str, expected_label: str) -> None:
     """Each committed risk scenario publishes the independently derived label."""
     evidence = execute_scenario(input_fn())
     calc = assertCalculationExists(

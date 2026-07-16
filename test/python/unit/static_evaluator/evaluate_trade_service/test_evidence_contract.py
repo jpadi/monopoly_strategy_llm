@@ -10,10 +10,9 @@ from fixtures import scenarioInputs
 from .assertions.evidence_assertions import (
     assertDeterministicIds,
     assertJsonSerializable,
-    assertValidDependencyGraph,
     assertTradeRatio,
+    assertValidDependencyGraph,
 )
-
 
 DETERMINISM_SCENARIOS = [
     pytest.param(scenarioInputs.balancedTradeInput, id="balancedTradeInput"),
@@ -25,33 +24,21 @@ DETERMINISM_SCENARIOS = [
         scenarioInputs.reviewRecommendedClassificationInput,
         id="reviewRecommendedClassificationInput",
     ),
-    pytest.param(
-        scenarioInputs.unavailableMonopolyRentInput, id="unavailableMonopolyRentInput"
-    ),
-    pytest.param(
-        scenarioInputs.partialMonopolyRentInput, id="partialMonopolyRentInput"
-    ),
+    pytest.param(scenarioInputs.unavailableMonopolyRentInput, id="unavailableMonopolyRentInput"),
+    pytest.param(scenarioInputs.partialMonopolyRentInput, id="partialMonopolyRentInput"),
 ]
 
 SERIALIZATION_SCENARIOS = [
     pytest.param(scenarioInputs.balancedTradeInput, id="balancedTradeInput"),
-    pytest.param(
-        scenarioInputs.unavailableMonopolyRentInput, id="unavailableMonopolyRentInput"
-    ),
+    pytest.param(scenarioInputs.unavailableMonopolyRentInput, id="unavailableMonopolyRentInput"),
     pytest.param(scenarioInputs.multiPartyTradeInput, id="multiPartyTradeInput"),
-    pytest.param(
-        scenarioInputs.customStreetGroupTradeInput, id="customStreetGroupTradeInput"
-    ),
+    pytest.param(scenarioInputs.customStreetGroupTradeInput, id="customStreetGroupTradeInput"),
 ]
 
 DEPENDENCY_SCENARIOS = [
     pytest.param(scenarioInputs.balancedTradeInput, id="balancedTradeInput"),
-    pytest.param(
-        scenarioInputs.survivalRiskCriticalInput, id="survivalRiskCriticalInput"
-    ),
-    pytest.param(
-        scenarioInputs.ratioGreaterThanFiveInput, id="ratioGreaterThanFiveInput"
-    ),
+    pytest.param(scenarioInputs.survivalRiskCriticalInput, id="survivalRiskCriticalInput"),
+    pytest.param(scenarioInputs.ratioGreaterThanFiveInput, id="ratioGreaterThanFiveInput"),
 ]
 
 

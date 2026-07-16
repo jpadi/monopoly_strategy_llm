@@ -15,12 +15,11 @@ Tests cover:
 import json
 
 import pytest
-
 from fixtures.fixtureLoader import (
     FIXTURE_ROOT,
     FixtureLoadError,
-    loadScenarioInput,
     loadRawScenarioInput,
+    loadScenarioInput,
 )
 from fixtures.scenarioInputs import perfectlyBalancedPrintedValueSwapInput
 
@@ -30,9 +29,7 @@ class TestValidFixtureLoading:
 
     def test_loads_existing_valid_fixture(self):
         """Valid fixture loads without error."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         assert isinstance(data, dict)
         assert "metadata" in data
@@ -43,9 +40,7 @@ class TestValidFixtureLoading:
 
     def test_fixture_contains_complete_metadata(self):
         """Loaded fixture has all required metadata fields."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         metadata = data["metadata"]
         assert "evaluation_id" in metadata
@@ -58,9 +53,7 @@ class TestValidFixtureLoading:
 
     def test_fixture_contains_complete_trade(self):
         """Loaded fixture has all required trade fields."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         trade = data["trade"]
         assert "id" in trade
@@ -71,9 +64,7 @@ class TestValidFixtureLoading:
 
     def test_classic_board_has_28_properties(self):
         """Classic board fixture has complete property set."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         before = data["board_state_before"]
         after = data["board_state_after"]
@@ -83,9 +74,7 @@ class TestValidFixtureLoading:
 
     def test_utf8_encoding_handled(self):
         """UTF-8 encoded fixtures load correctly."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         # Check we can serialize back to JSON without issues
         serialized = json.dumps(data)
@@ -163,10 +152,7 @@ class TestPathTraversalPrevention:
 
         # Should fail either with "not found" or "outside fixture root"
         error_msg = str(exc_info.value)
-        assert (
-            "not found" in error_msg.lower()
-            or "outside fixture root" in error_msg.lower()
-        )
+        assert "not found" in error_msg.lower() or "outside fixture root" in error_msg.lower()
 
 
 class TestClassicBoardValidation:
@@ -174,9 +160,7 @@ class TestClassicBoardValidation:
 
     def test_classic_board_validates_property_counts(self):
         """Classic board must have exactly 28 properties."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         before_props = data["board_state_before"]["properties"]
         after_props = data["board_state_after"]["properties"]
@@ -199,9 +183,7 @@ class TestOwnershipConsistencyValidation:
 
     def test_ownership_lists_match_property_owners(self):
         """Player owned_properties matches property owner_player_id."""
-        data = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        data = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         for board_key in ["board_state_before", "board_state_after"]:
             board = data[board_key]
@@ -219,9 +201,7 @@ class TestOwnershipConsistencyValidation:
             for player in board["players"]:
                 player_owned = set(player.get("owned_properties", []))
                 props_owned = set(ownership_from_props.get(player["id"], []))
-                assert player_owned == props_owned, (
-                    f"Ownership mismatch for {player['id']} in {board_key}"
-                )
+                assert player_owned == props_owned, f"Ownership mismatch for {player['id']} in {board_key}"
 
 
 class TestTransferSemanticsValidation:
@@ -278,9 +258,7 @@ class TestScenarioFunctionIntegration:
     def test_scenario_function_returns_same_as_direct_load(self):
         """Scenario function returns same data as direct loader call."""
         from_func = perfectlyBalancedPrintedValueSwapInput()
-        from_loader = loadScenarioInput(
-            "trade_ratio/perfectly_balanced_printed_value_swap.json"
-        )
+        from_loader = loadScenarioInput("trade_ratio/perfectly_balanced_printed_value_swap.json")
 
         assert from_func == from_loader
 

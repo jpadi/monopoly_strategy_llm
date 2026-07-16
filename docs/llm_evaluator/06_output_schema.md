@@ -16,9 +16,27 @@ Its purpose is solely to define the JSON representation of the evaluator's outpu
 
 ---
 
+## Mandatory Response Format
+
+Every Judge response MUST satisfy all of the following rules:
+
+- The response MUST be exactly **one JSON object**.
+- The response MUST NOT contain prose, Markdown, code fences, summaries, or file references outside that JSON object.
+- The response MUST NOT redirect the host to read output from a filesystem path or external resource.
+- The response MUST include **every required top-level section** defined by this schema.
+- Every required field defined by this schema MUST be present with a valid value, or explicit `null` only where this schema permits null.
+- Undocumented additional top-level keys are forbidden.
+- Invalid enum values invalidate the response.
+- Missing required fields invalidate the response.
+- Omitting required evidence because it is large invalidates the response.
+
+When LLM Static Fallback executes, the response MUST include complete `generated_static_algorithm_evidence` that satisfies `04_static_algorithm_specification.md`. A prose summary MUST NOT replace canonical evidence.
+
+---
+
 ## Top-Level Structure
 
-The output should be a single JSON object with the following top-level sections.
+The output MUST be a single JSON object with the following top-level sections.
 
 ```json
 {
@@ -36,7 +54,7 @@ The output should be a single JSON object with the following top-level sections.
 
 ## Required Sections
 
-The following sections are always required.
+The following sections are **always required**.
 
 ```text
 competitive_classification
@@ -54,11 +72,11 @@ confidence_assessment
 final_summary
 ```
 
-Every evaluation should produce all sections.
+Every evaluation MUST produce all sections.
 
-Individual sections may contain empty collections when no relevant information exists.
+Individual sections MAY contain empty collections when no relevant information exists.
 
-The overall output structure should remain consistent for every evaluation.
+The overall output structure MUST remain consistent for every evaluation.
 
 ## Competitive Classification
 
@@ -429,6 +447,8 @@ Every element uses the canonical Static Algorithm Evidence structure defined by 
 Empty when `execution_mode` is not `LLM_STATIC_FALLBACK`.
 
 Returning a prose summary instead of the complete generated evidence is forbidden.
+
+Implementations should validate generated evidence against the canonical Static Algorithm Evidence contract before accepting `execution_status = COMPLETE`.
 
 ---
 

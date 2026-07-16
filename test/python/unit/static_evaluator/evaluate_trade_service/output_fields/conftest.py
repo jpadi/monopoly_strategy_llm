@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-
 from fixtures import scenarioInputs
 
 from .output_field_coverage import get_required_scenarios

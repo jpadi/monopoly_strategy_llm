@@ -396,6 +396,23 @@ This field is mandatory when status is `PARTIAL` or `UNAVAILABLE`.
 
 Identifiers of calculations that consume this result or whose reliability is affected by it.
 
+Each entry must be the `id` of another item in the same evidence object's `intermediate_calculations` array. A calculation must not reference itself. Every referenced id must exist exactly once in that array.
+
+#### Reference graph integrity (required before return)
+
+When generating fallback evidence, verify the complete reference graph **before** returning JSON:
+
+1. Build the complete `intermediate_calculations` array.
+2. Collect all calculation `id` values and verify they are unique.
+3. Verify every `dependent_calculation_ids` entry references an existing id in the same evidence object.
+4. Verify no calculation references itself.
+5. Verify every `final_conclusions` calculation reference (`calculation_id`, `calculation_ids`, and nested item references) exists in `intermediate_calculations`.
+6. Verify required envelope, metadata, statistics, and `final_conclusions` fields exist.
+7. Verify the complete Judge output matches `docs/llm_evaluator/06_output_schema.md`.
+8. Return exactly one JSON object with no surrounding prose or Markdown.
+
+If the host sends a repair request after validation failure, return one complete corrected Judge output JSON object only — not prose, file references, or a partial patch.
+
 #### metadata
 
 Optional implementation-specific information that does not alter the calculation meaning.

@@ -1,0 +1,64 @@
+{
+  "competitive_classification": {
+    "classification": "competitively_sound",
+    "score": null,
+    "confidence": "high",
+    "metadata": {}
+  },
+  "competitive_evaluation": {
+    "summary": "Trade appears competitively balanced based on provided evidence.",
+    "immediate_effects": [],
+    "long_term_effects": [],
+    "affected_players": [],
+    "key_findings": [],
+    "metadata": {}
+  },
+  "supporting_evidence": {
+    "board_state_evidence": [],
+    "trade_information_evidence": [],
+    "game_configuration_evidence": [],
+    "static_algorithm_evidence": [],
+    "metadata": {}
+  },
+  "static_analysis_result": {
+    "requested_mode": "auto",
+    "execution_mode": "NO_STATIC_ANALYSIS",
+    "evidence_source": null,
+    "algorithm_id": null,
+    "algorithm_version": null,
+    "dependency_versions": {},
+    "execution_status": "UNAVAILABLE",
+    "fallback_attempted": false,
+    "fallback_reason": null,
+    "competitive_evaluation_used_static_evidence": false,
+    "generated_static_algorithm_evidence": [],
+    "limitations": [
+      "No usable supplied evidence and fallback not authorized."
+    ],
+    "errors": [],
+    "metadata": {}
+  },
+  "decision_pattern_analysis": {
+    "matched_patterns": [],
+    "unmatched_patterns": [],
+    "summary": "No decision patterns matched.",
+    "metadata": {}
+  },
+  "confidence_assessment": {
+    "overall_confidence": "high",
+    "confidence_factors": [
+      "Complete board state provided"
+    ],
+    "limitations": [
+      "No usable supplied evidence and fallback not authorized."
+    ],
+    "metadata": {}
+  },
+  "final_summary": {
+    "summary": "Evaluation complete.",
+    "highlights": [
+      "competitively_sound"
+    ],
+    "metadata": {}
+  }
+}

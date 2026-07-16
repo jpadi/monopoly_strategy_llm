@@ -1,0 +1,290 @@
+{
+  "id": "evidence_static_trade_imbalance_001",
+  "algorithm_id": "monopoly_static_algorithm",
+  "algorithm_name": "Static Trade Imbalance Evaluator",
+  "algorithm_version": "1.0",
+  "purpose": "trade ratio calculation and competitive advantage calculation",
+  "intermediate_calculations": [
+    {
+      "id": "calc_001",
+      "calculation_type": "base_asset_value",
+      "description": "Nominal recoverable value received by player_a",
+      "status": "COMPLETE",
+      "side": "trade",
+      "subject": {
+        "player_ids": [
+          "player_a"
+        ],
+        "property_ids": [
+          "property_tennessee"
+        ],
+        "group_ids": [],
+        "trade_id": "trade_balanced",
+        "transfer_ids": [
+          "transfer_tennessee"
+        ]
+      },
+      "input_references": [
+        "trade.transfers[transfer_tennessee]",
+        "board_state_before.properties[property_tennessee]"
+      ],
+      "input_values": {
+        "property_property_tennessee_purchase_price": 180,
+        "property_property_tennessee_mortgage_value": 90,
+        "property_property_tennessee_is_mortgaged": false,
+        "house_sell_back_ratio": 0.5,
+        "hotel_sell_back_ratio": 0.5
+      },
+      "sources": {
+        "get_out_of_jail_card_value": "SPECIFICATION_DEFAULT",
+        "house_sell_back_ratio": "GAME_CONFIGURATION"
+      },
+      "formula": "Cash + Printed Property + Building Liquidation + Cards",
+      "procedure": null,
+      "intermediate_values": {
+        "cash_received": 0,
+        "property_value": 180,
+        "building_value": 0,
+        "card_value": 0,
+        "line_items": [
+          {
+            "type": "property",
+            "transfer_id": "transfer_tennessee",
+            "property_id": "property_tennessee",
+            "amount": 0,
+            "printed_value": 180,
+            "building_value": 0
+          }
+        ]
+      },
+      "result": 180,
+      "unit": "currency",
+      "limitations": [],
+      "missing_inputs": [],
+      "dependent_calculation_ids": [],
+      "metadata": {}
+    },
+    {
+      "id": "calc_056",
+      "calculation_type": "base_asset_value",
+      "description": "Nominal recoverable value received by player_b",
+      "status": "COMPLETE",
+      "side": "trade",
+      "subject": {
+        "player_ids": [
+          "player_b"
+        ],
+        "property_ids": [
+          "property_st_james"
+        ],
+        "group_ids": [],
+        "trade_id": "trade_balanced",
+        "transfer_ids": [
+          "transfer_cash",
+          "transfer_st_james"
+        ]
+      },
+      "input_references": [
+        "trade.transfers[transfer_cash]",
+        "trade.transfers[transfer_st_james]",
+        "board_state_before.properties[property_st_james]"
+      ],
+      "input_values": {
+        "transfer_transfer_cash_amount": 100,
+        "property_property_st_james_purchase_price": 180,
+        "property_property_st_james_mortgage_value": 90,
+        "property_property_st_james_is_mortgaged": false,
+        "house_sell_back_ratio": 0.5,
+        "hotel_sell_back_ratio": 0.5
+      },
+      "sources": {
+        "get_out_of_jail_card_value": "SPECIFICATION_DEFAULT",
+        "house_sell_back_ratio": "GAME_CONFIGURATION"
+      },
+      "formula": "Cash + Printed Property + Building Liquidation + Cards",
+      "procedure": null,
+      "intermediate_values": {
+        "cash_received": 100,
+        "property_value": 180,
+        "building_value": 0,
+        "card_value": 0,
+        "line_items": [
+          {
+            "type": "cash",
+            "transfer_id": "transfer_cash",
+            "value": 100
+          },
+          {
+            "type": "property",
+            "transfer_id": "transfer_st_james",
+            "property_id": "property_st_james",
+            "amount": 0,
+            "printed_value": 180,
+            "building_value": 0
+          }
+        ]
+      },
+      "result": 280,
+      "unit": "currency",
+      "limitations": [],
+      "missing_inputs": [],
+      "dependent_calculation_ids": [],
+      "metadata": {}
+    },
+    {
+      "id": "calc_111",
+      "calculation_type": "trade_ratio",
+      "description": "Trade ratio comparison",
+      "status": "COMPLETE",
+      "side": "trade",
+      "subject": {
+        "player_ids": [
+          "player_a",
+          "player_b"
+        ],
+        "property_ids": [],
+        "group_ids": [],
+        "trade_id": null,
+        "transfer_ids": []
+      },
+      "input_references": [],
+      "input_values": {},
+      "sources": {},
+      "formula": "min(max(A,B) / max(1, min(A,B)), MAX_TRADE_RATIO)",
+      "procedure": null,
+      "intermediate_values": {
+        "highest_strategic_value": 280,
+        "lowest_strategic_value": 180,
+        "division_denominator": 180,
+        "raw_trade_ratio": 1.5555555555555556,
+        "maximum_trade_ratio": 5.0,
+        "published_trade_ratio": 1.56
+      },
+      "result": 1.56,
+      "unit": "ratio",
+      "limitations": [],
+      "missing_inputs": [],
+      "dependent_calculation_ids": [
+        "calc_112"
+      ],
+      "metadata": {}
+    },
+    {
+      "id": "calc_112",
+      "calculation_type": "final_static_classification",
+      "description": "Final static trade classification",
+      "status": "COMPLETE",
+      "side": "trade",
+      "subject": {
+        "player_ids": [
+          "player_a",
+          "player_b"
+        ],
+        "property_ids": [],
+        "group_ids": [],
+        "trade_id": null,
+        "transfer_ids": []
+      },
+      "input_references": [
+        "trade.initiating_player_id"
+      ],
+      "input_values": {
+        "initiating_player_id": "player_a"
+      },
+      "sources": {},
+      "formula": null,
+      "procedure": "Evaluate automatic flag rules, apply initiator adjustment, classify by strong-flag count",
+      "intermediate_values": {
+        "automatic_rules": [
+          {
+            "rule": "HIGHLY_SUSPICIOUS_IMBALANCE",
+            "ratio": 1.56,
+            "threshold": 5.0,
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "SUSPICIOUS_IMBALANCE",
+            "ratio": 1.56,
+            "threshold": 3.0,
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "BUILDABLE_MONOPOLY_GIVEN_AWAY",
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "DANGEROUS_MONOPOLY_ENABLED",
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "SYMBOLIC_VALUE_TRADE",
+            "highest_value": 280,
+            "lowest_value": 180,
+            "threshold_ratio": 0.1,
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "HOUSE_CONTROL_ENABLED",
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "HOUSE_SUPPLY_DENIAL",
+            "predicate_result": false,
+            "flag_generated": null
+          },
+          {
+            "rule": "STRATEGIC_RAILROAD_GIVEAWAY",
+            "predicate_result": false,
+            "flag_generated": null
+          }
+        ],
+        "flags_before_initiator_adjustment": [],
+        "flags_after_initiator_adjustment": [],
+        "initiator_rule_evaluated": true,
+        "initiating_player_id": "player_a",
+        "apparent_overpayer": "player_a",
+        "initiator_adjustment_applied": false,
+        "strong_flags": [],
+        "strong_flag_count": 0,
+        "trade_ratio": 1.56,
+        "final_classification": "NO_FLAG"
+      },
+      "result": "NO_FLAG",
+      "unit": "classification",
+      "limitations": [],
+      "missing_inputs": [],
+      "dependent_calculation_ids": [],
+      "metadata": {}
+    }
+  ],
+  "final_conclusions": {
+    "trade_ratio": {
+      "value": 1.56,
+      "calculation_id": "calc_111"
+    },
+    "flags": {
+      "values": [],
+      "calculation_id": "calc_112"
+    },
+    "classification": "NO_FLAG",
+    "classification_calculation_id": "calc_112"
+  },
+  "metadata": {
+    "implementation_overrides": [],
+    "specification_dependencies": [
+      {
+        "specification_id": "monopoly_risk_reference",
+        "specification_version": "1.0"
+      }
+    ]
+  },
+  "statistics": {
+    "calculation_count": 4
+  }
+}

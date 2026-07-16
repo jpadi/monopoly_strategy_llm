@@ -13,6 +13,7 @@ import inspect
 from pathlib import Path
 
 from fixtures import scenarioInputs
+
 from .assertions.scenario_registry import (
     SCENARIO_REGISTRY,
     getScenariosWithoutExpectations,
@@ -37,14 +38,10 @@ class TestRegistryCompleteness:
         function_names = set(public_functions)
 
         missing_from_registry = function_names - registry_names
-        assert not missing_from_registry, (
-            f"Functions not in registry: {missing_from_registry}"
-        )
+        assert not missing_from_registry, f"Functions not in registry: {missing_from_registry}"
 
         extra_in_registry = registry_names - function_names
-        assert not extra_in_registry, (
-            f"Registry entries without functions: {extra_in_registry}"
-        )
+        assert not extra_in_registry, f"Registry entries without functions: {extra_in_registry}"
 
     def test_no_orphan_json_fixtures(self) -> None:
         """Every JSON fixture has a registry entry."""
@@ -64,9 +61,7 @@ class TestRegistryCompleteness:
         if orphan_fixtures:
             # Only fail if there are actual orphans (not index files, etc.)
             real_orphans = {f for f in orphan_fixtures if not f.startswith("_")}
-            assert not real_orphans, (
-                f"Orphan JSON fixtures without registry entries: {real_orphans}"
-            )
+            assert not real_orphans, f"Orphan JSON fixtures without registry entries: {real_orphans}"
 
     def test_no_duplicate_json_paths(self) -> None:
         """Every JSON path appears in exactly one registry entry."""
@@ -110,6 +105,4 @@ class TestRegistryExpectations:
                     or entry.expected.error_expected
                     or entry.expected.has_behavioral_assertion()
                 )
-                assert has_failure_expectation, (
-                    f"Invalid scenario {entry.name} has no expected failure mode"
-                )
+                assert has_failure_expectation, f"Invalid scenario {entry.name} has no expected failure mode"

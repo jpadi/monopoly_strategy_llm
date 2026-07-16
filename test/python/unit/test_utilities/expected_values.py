@@ -6,7 +6,6 @@ production logic. They compute expected values from explicitly supplied inputs.
 
 from __future__ import annotations
 
-
 # ──────────────────────────────────────────────────────────────
 # Specification Default Values (from static_algorithm_specification.md)
 # ──────────────────────────────────────────────────────────────
@@ -220,9 +219,7 @@ def expectedFutureNegotiationBonus(additional_blocked_count: int) -> int:
     if additional_blocked_count < 0:
         return 0
 
-    bonus = FUTURE_NEGOTIATION_BASE + (
-        additional_blocked_count * FUTURE_NEGOTIATION_PER_ADDITIONAL
-    )
+    bonus = FUTURE_NEGOTIATION_BASE + (additional_blocked_count * FUTURE_NEGOTIATION_PER_ADDITIONAL)
     return min(bonus, FUTURE_NEGOTIATION_CAP)
 
 

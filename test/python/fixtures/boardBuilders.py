@@ -28,7 +28,6 @@ from fixtures.classicBoardData import (
     classicAllProperties,
 )
 
-
 # ──────────────────────────────────────────────────────────────
 # Internal Property Constructors
 # ──────────────────────────────────────────────────────────────
@@ -67,9 +66,7 @@ def _street(
     }
 
 
-def _railroad(
-    *, id: str, owner_player_id: str | None, is_tradable: bool = True
-) -> dict[str, Any]:
+def _railroad(*, id: str, owner_player_id: str | None, is_tradable: bool = True) -> dict[str, Any]:
     return {
         "id": id,
         "display_name": id,

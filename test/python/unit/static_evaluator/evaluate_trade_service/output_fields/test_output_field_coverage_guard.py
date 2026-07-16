@@ -53,9 +53,7 @@ def test_coverage_scenario_loader_exists(entry) -> None:
     """Every mapped scenario function must exist in fixtures.scenarioInputs."""
     from fixtures import scenarioInputs
 
-    assert hasattr(scenarioInputs, entry.scenario_function), (
-        f"Missing scenario loader: {entry.scenario_function}"
-    )
+    assert hasattr(scenarioInputs, entry.scenario_function), f"Missing scenario loader: {entry.scenario_function}"
 
 
 @pytest.mark.parametrize(
@@ -74,11 +72,7 @@ def test_partial_status_reachable() -> None:
     from .output_field_inventory import STATUS_VALUES
 
     assert "PARTIAL" in STATUS_VALUES
-    partial_entries = [
-        entry
-        for entry in OUTPUT_FIELD_COVERAGE
-        if entry.field_key == "item.status.PARTIAL"
-    ]
+    partial_entries = [entry for entry in OUTPUT_FIELD_COVERAGE if entry.field_key == "item.status.PARTIAL"]
     assert len(partial_entries) == 1
     assert partial_entries[0].scenario_function == "partialMonopolyRentInput"
 
@@ -127,11 +121,7 @@ CRITICAL_SEMANTIC_FIELD_KEYS = frozenset(
 def test_critical_fields_classified_as_semantic() -> None:
     """High-trust fields must be classified as semantic in the coverage registry."""
     by_key = {entry.field_key: entry for entry in OUTPUT_FIELD_COVERAGE}
-    missing = sorted(
-        key
-        for key in CRITICAL_SEMANTIC_FIELD_KEYS
-        if by_key[key].assertion_tier != "SEMANTIC"
-    )
+    missing = sorted(key for key in CRITICAL_SEMANTIC_FIELD_KEYS if by_key[key].assertion_tier != "SEMANTIC")
     assert not missing, f"Critical fields not marked SEMANTIC: {missing}"
 
 
@@ -139,9 +129,5 @@ def test_every_category_module_exposes_parametrized_field_test() -> None:
     """Each category module must expose the shared parametrized field test."""
     modules = {entry.test_module for entry in OUTPUT_FIELD_COVERAGE}
     for module_name in sorted(modules):
-        module = importlib.import_module(
-            f"unit.static_evaluator.evaluate_trade_service.output_fields.{module_name}"
-        )
-        assert hasattr(module, "test_output_field"), (
-            f"{module_name}.test_output_field not found"
-        )
+        module = importlib.import_module(f"unit.static_evaluator.evaluate_trade_service.output_fields.{module_name}")
+        assert hasattr(module, "test_output_field"), f"{module_name}.test_output_field not found"

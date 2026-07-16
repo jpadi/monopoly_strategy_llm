@@ -16,9 +16,7 @@ def getCalculation(
     player_id: str | None = None,
 ) -> dict[str, Any]:
     """Return a calculation item or raise."""
-    return assertCalculationExists(
-        evidence, calculation_type, side=side, player_id=player_id
-    )
+    return assertCalculationExists(evidence, calculation_type, side=side, player_id=player_id)
 
 
 def assertFieldEquals(
@@ -29,11 +27,7 @@ def assertFieldEquals(
     scenario: str,
 ) -> None:
     """Assert an output field equals the expected value."""
-    assert actual == expected, (
-        f"Scenario {scenario}: {field_path}\n"
-        f"  expected: {expected!r}\n"
-        f"  actual:   {actual!r}"
-    )
+    assert actual == expected, f"Scenario {scenario}: {field_path}\n  expected: {expected!r}\n  actual:   {actual!r}"
 
 
 def assertFieldIn(
@@ -45,9 +39,7 @@ def assertFieldIn(
 ) -> None:
     """Assert an output field is one of the allowed values."""
     assert actual in allowed, (
-        f"Scenario {scenario}: {field_path}\n"
-        f"  expected one of: {sorted(allowed)!r}\n"
-        f"  actual: {actual!r}"
+        f"Scenario {scenario}: {field_path}\n  expected one of: {sorted(allowed)!r}\n  actual: {actual!r}"
     )
 
 
@@ -92,14 +84,8 @@ def assertInputReferenceResolves(
         )
         return
 
-    if reference.startswith("board_state_before.properties[") or reference.startswith(
-        "board_state_after.properties["
-    ):
-        board_key = (
-            "board_state_before"
-            if reference.startswith("board_state_before")
-            else "board_state_after"
-        )
+    if reference.startswith("board_state_before.properties[") or reference.startswith("board_state_after.properties["):
+        board_key = "board_state_before" if reference.startswith("board_state_before") else "board_state_after"
         property_id = reference.split("[", 1)[1].rstrip("]")
         properties = input_data[board_key]["properties"]
         assert any(p["id"] == property_id for p in properties), (
@@ -116,19 +102,11 @@ def assertInputReferenceResolves(
                 f"Scenario {scenario}: group multiplier reference {reference!r} not found"
             )
             return
-        assert path in config, (
-            f"Scenario {scenario}: config reference {reference!r} not found"
-        )
+        assert path in config, f"Scenario {scenario}: config reference {reference!r} not found"
         return
 
-    if reference.startswith("board_state_before.players[") or reference.startswith(
-        "board_state_after.players["
-    ):
-        board_key = (
-            "board_state_before"
-            if reference.startswith("board_state_before")
-            else "board_state_after"
-        )
+    if reference.startswith("board_state_before.players[") or reference.startswith("board_state_after.players["):
+        board_key = "board_state_before" if reference.startswith("board_state_before") else "board_state_after"
         player_id = reference.split("[", 1)[1].rstrip("]")
         players = input_data[board_key]["players"]
         assert any(p["id"] == player_id for p in players), (
@@ -136,9 +114,7 @@ def assertInputReferenceResolves(
         )
         return
 
-    raise AssertionError(
-        f"Scenario {scenario}: unsupported input reference pattern {reference!r}"
-    )
+    raise AssertionError(f"Scenario {scenario}: unsupported input reference pattern {reference!r}")
 
 
 def assertConclusionReferencesCalculation(
@@ -147,9 +123,7 @@ def assertConclusionReferencesCalculation(
 ) -> None:
     """Assert a final-conclusion calculation_id references an existing calc."""
     calc_ids = {c["id"] for c in evidence["intermediate_calculations"]}
-    assert calculation_id in calc_ids, (
-        f"Conclusion references missing calculation: {calculation_id}"
-    )
+    assert calculation_id in calc_ids, f"Conclusion references missing calculation: {calculation_id}"
 
 
 def countCalculationsByStatus(evidence: dict[str, Any]) -> dict[str, int]:

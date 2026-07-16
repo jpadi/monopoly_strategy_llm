@@ -47,9 +47,7 @@ def assertNoDuplicateIds(evidence: dict[str, Any]) -> None:
     """
     ids = [calc["id"] for calc in evidence["intermediate_calculations"]]
     unique_ids = set(ids)
-    assert len(ids) == len(unique_ids), (
-        f"Duplicate calculation IDs found: {len(ids)} total, {len(unique_ids)} unique"
-    )
+    assert len(ids) == len(unique_ids), f"Duplicate calculation IDs found: {len(ids)} total, {len(unique_ids)} unique"
 
 
 def assertAllReferencesExist(evidence: dict[str, Any]) -> None:
@@ -63,8 +61,7 @@ def assertAllReferencesExist(evidence: dict[str, Any]) -> None:
     for calc in evidence["intermediate_calculations"]:
         for dep_id in calc.get("dependent_calculation_ids", []):
             assert dep_id in all_ids, (
-                f"Calculation {calc['id']} references non-existent "
-                f"dependent_calculation_id: {dep_id}"
+                f"Calculation {calc['id']} references non-existent dependent_calculation_id: {dep_id}"
             )
 
 
@@ -233,11 +230,7 @@ def assertBeforeAfterFeedDelta(
         evidence: The complete evidence dictionary
         calculation_type: The calculation type to check
     """
-    calcs = [
-        c
-        for c in evidence["intermediate_calculations"]
-        if c["calculation_type"] == calculation_type
-    ]
+    calcs = [c for c in evidence["intermediate_calculations"] if c["calculation_type"] == calculation_type]
 
     deltas = [c for c in calcs if c["side"] == "delta"]
 

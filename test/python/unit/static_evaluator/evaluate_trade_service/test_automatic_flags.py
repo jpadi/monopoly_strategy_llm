@@ -5,10 +5,10 @@ from __future__ import annotations
 from fixtures import scenarioInputs
 
 from .assertions.evidence_assertions import (
-    assertValidEvidenceEnvelope,
-    assertFlagPresent,
-    assertFlagAbsent,
     assertFinalClassification,
+    assertFlagAbsent,
+    assertFlagPresent,
+    assertValidEvidenceEnvelope,
 )
 
 
@@ -19,9 +19,7 @@ class TestDangerousMonopolyEnabled:
         assertValidEvidenceEnvelope(evidence)
         assertFlagPresent(evidence, "DANGEROUS_MONOPOLY_ENABLED")
 
-    def test_exactly_three_houses_each_triggers_dangerous(
-        self, execute_scenario
-    ) -> None:
+    def test_exactly_three_houses_each_triggers_dangerous(self, execute_scenario) -> None:
         input_data = scenarioInputs.exactlyThreeHousesEachInput()
         evidence = execute_scenario(input_data)
         assertFlagPresent(evidence, "DANGEROUS_MONOPOLY_ENABLED")
@@ -66,9 +64,7 @@ class TestHouseSupplyDenial:
 
 
 class TestStrategicRailroadGiveaway:
-    def test_strategic_railroad_giveaway_fixture_executes(
-        self, execute_scenario
-    ) -> None:
+    def test_strategic_railroad_giveaway_fixture_executes(self, execute_scenario) -> None:
         """Verify fixture executes - flag requires specific board configuration."""
         input_data = scenarioInputs.strategicRailroadGiveawayInput()
         evidence = execute_scenario(input_data)
@@ -76,9 +72,7 @@ class TestStrategicRailroadGiveaway:
 
 
 class TestMultipleFlags:
-    def test_dangerous_monopoly_giveaway_produces_review_recommended(
-        self, execute_scenario
-    ) -> None:
+    def test_dangerous_monopoly_giveaway_produces_review_recommended(self, execute_scenario) -> None:
         input_data = scenarioInputs.dangerousMonopolyGiveawayInput()
         evidence = execute_scenario(input_data)
         assertValidEvidenceEnvelope(evidence)

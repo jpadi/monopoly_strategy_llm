@@ -4,15 +4,15 @@ Research specifications and a Python reference implementation for evaluating Mon
 
 The project separates **deterministic analysis** from **strategic interpretation**. Deterministic software, Large Language Models, or hybrid systems can consume the same normative contracts to produce transparent, explainable, and auditable trade evaluations.
 
-Specifications are implementation-independent. The repository also contains a Python reference implementation of the deterministic Static Evaluator under `src/python/`. Whenever implementation and specification disagree, the specification is authoritative.
+Specifications are implementation-independent. The repository contains Python reference implementations of the **Static Evaluator** and **LLM Judge** under `src/python/`. Whenever implementation and specification disagree, the specification is authoritative.
 
 ---
 
 ## Current Release
 
-**Current version: 1.1.0**
+**Current version: 1.2.0**
 
-Version 1.1.0 reorganizes the repository and adds the Python reference implementation of the deterministic Static Evaluator together with its unit and functional test suites.
+Version 1.2.0 adds the Python reference implementation of the LLM Judge module (`LlmEvaluation`) with platform-agnostic LLM ports, API-based specification delivery (initial prompt + inline file attachments), Cursor SDK adapter, and unit/functional/integration test architecture.
 
 See [CHANGELOG.md](CHANGELOG.md) for the complete release history.
 
@@ -54,7 +54,7 @@ Combining both in one opaque step produces results that are hard to audit or rep
 | Component | Status | Responsibility |
 |-----------|--------|----------------|
 | **Static Evaluator** | Specified; Python reference in `src/python/` | Deterministic calculations and Static Algorithm Evidence |
-| **LLM Judge** | Specified only | Strategic interpretation, classification, and final evaluation |
+| **LLM Judge** | Specified; Python reference in `src/python/` (`LlmEvaluation`) | Strategic interpretation, classification, and final evaluation |
 | **Player Profile Evaluator** | Conceptual | Long-term behavioral profiles across games |
 
 The Static Evaluator never determines player intent. The Judge never replaces deterministic evidence when valid evidence is supplied.
@@ -70,17 +70,21 @@ The Static Evaluator never determines player intent. The Judge never replaces de
 ├── docs/
 │   ├── static_evaluator/          # Algorithm specification and Risk Reference
 │   ├── llm_evaluator/             # Judge, I/O specs, evidence contract, strategy KB
+│   ├── llm_platform/              # LLM client delivery docs (appended to initial prompt)
+│   │   └── cursor/                # Cursor SDK contract and transport envelope (v1.2.0)
 │   └── player_profile_evaluator/  # Conceptual future component
 ├── src/
 │   └── python/                    # Python reference implementation
 └── test/
-    └── python/                    # Unit, functional, and JSON fixture tests
+    └── python/                    # Unit, functional, integration tests, and fixtures
+        ├── integration/LlmEvaluation/
+        └── fixtures/llm_evaluation/
 ```
 
 | Path | Responsibility |
 |------|----------------|
 | `docs/` | Normative specifications: algorithms, evidence contracts, input/output models, strategic knowledge |
-| `src/python/` | Python reference implementation of the Static Evaluator only |
+| `src/python/` | Python reference implementation (Static Evaluator + LLM Judge) |
 | `test/python/` | Tests and canonical JSON fixtures for the Python implementation |
 
 Classic Monopoly fixtures use the complete classic board (28 purchasable properties). Transfer semantics, fixture rules, and test organization are documented in [src/python/README.md](src/python/README.md).
@@ -108,6 +112,8 @@ The Judge consumes game state, trade information, optional Static Analysis Contr
 The Judge does not determine player intent, fairness, ethics, or sportsmanship. See [docs/llm_evaluator/01_judge.md](docs/llm_evaluator/01_judge.md).
 
 Strategy concepts come from the [Strategy Knowledge Base](docs/llm_evaluator/07_strategy_knowledge_base.md), delivered to the Judge as Decision Pattern Profiles.
+
+For API integrations, `JudgePromptBuilder` passes **file paths** to `LlmClient` (`instructionFilePaths`, `attachmentFilePaths`); the client loads and delivers content per [File Attachment Standard](docs/llm_platform/file_attachment_standard.md). Every execution delivers **all** files under `docs/llm_evaluator/`; executions resolved to **LLM Static Fallback** additionally deliver **all** files under `docs/static_evaluator/`. The delivery manifest lists every instruction and attachment path for the request. See [Initial Prompt](docs/llm_evaluator/00_initial_prompt.md).
 
 ---
 
@@ -139,15 +145,14 @@ Full rules are in [docs/llm_evaluator/01_judge.md](docs/llm_evaluator/01_judge.m
 
 ## Python Reference Implementation
 
-The Python implementation under [src/python/](src/python/) executes the deterministic Static Trade Imbalance Evaluator. It:
+The Python implementation under [src/python/](src/python/) includes:
 
-- receives canonical `metadata`, `game_configuration`, `board_state_before`, `trade`, and `board_state_after`;
-- executes the static algorithm;
-- returns complete Static Algorithm Evidence;
-- does **not** execute Judge interpretation;
-- is **protocol-independent** — suitable for embedding or wrapping with future HTTP, gRPC, messaging, or CLI adapters without changing the deterministic algorithm.
+- **Static Evaluator** — deterministic static algorithm; receives canonical evaluation input and returns Static Algorithm Evidence.
+- **LLM Judge** (`LlmEvaluation`) — orchestrates strategic evaluation via platform-agnostic LLM ports; passes instruction and attachment **file paths** to each client for delivery per [File Attachment Standard](docs/llm_platform/file_attachment_standard.md).
 
-Architecture, CQRS flow, protocol independence, fixture model, testing strategy, and development commands are documented in **[src/python/README.md](src/python/README.md)**.
+Both modules are **protocol-independent** — suitable for embedding or wrapping with HTTP, gRPC, messaging, CLI, or LLM API adapters.
+
+Architecture, CQRS flow, specification delivery, fixture model, testing strategy, and development commands are documented in **[src/python/README.md](src/python/README.md)**.
 
 Quick start:
 
@@ -162,6 +167,11 @@ pytest test/python/
 
 | Document | Purpose |
 |----------|---------|
+| [Initial Prompt](docs/llm_evaluator/00_initial_prompt.md) | Entry point: specification structure and read order for the LLM Judge |
+| [File Attachment Standard](docs/llm_platform/file_attachment_standard.md) | Inline path-header format for API specification delivery |
+| [LLM Platform](docs/llm_platform/README.md) | Why this folder exists; client-specific delivery docs appended to the initial prompt |
+| [Cursor Platform Integration](docs/llm_platform/cursor/README.md) | Cursor SDK adapter, transport envelope, file-reference recovery, and provider limitations |
+| [Judge Specification](docs/llm_evaluator/01_judge.md) | Strategic interpretation and operating modes |
 | [Input Specification](docs/llm_evaluator/02_input_specification.md) | Input semantics and business rules |
 | [Input Schema](docs/llm_evaluator/03_input_schema.md) | Input structure and validation |
 | [Static Algorithm Evidence Spec](docs/llm_evaluator/04_static_algorithm_specification.md) | Evidence output contract |
@@ -181,9 +191,9 @@ The Python test suite validates the reference implementation against the specifi
 - **Application-service unit tests** through injected `EvaluateTradeService`.
 - **Functional CQRS tests** through the configured `QueryBus` and `EvaluateTradeQuery`.
 - **JSON-backed scenario inputs** with one primary behavioral expectation per scenario (via the scenario registry).
-- **Focused output-field verification** with an enforced coverage registry (135 canonical fields).
+- Focused output-field verification with enforced coverage registries: **136** Static Evaluator evidence fields (`output_fields/`) and **40** LLM Judge output schema section fields across seven top-level sections (`judge_output_field_inventory.py`).
 - **Evidence structure checks** through scenario tests, calculation-family tests, and field-level assertions (envelope, dependencies, statuses, final conclusions).
-- **No integration tests** — the implementation has no external integrations.
+- **LLM Judge tests** (unit, functional, and Cursor integration when `CURSOR_API_KEY` is configured in the repository root `.env` or process environment).
 
 Details: [src/python/README.md#testing](src/python/README.md#testing).
 
@@ -205,12 +215,13 @@ Details: [src/python/README.md#testing](src/python/README.md#testing).
 2. [Static Algorithm Specification](docs/static_evaluator/static_algorithm_specification.md) — deterministic algorithm behavior.
 3. [Static Algorithm Evidence Specification](docs/llm_evaluator/04_static_algorithm_specification.md) — evidence output contract.
 4. [Judge Specification](docs/llm_evaluator/01_judge.md) — strategic interpretation and operating modes.
-5. [src/python/README.md](src/python/README.md) — reference implementation guide.
+5. [Initial Prompt](docs/llm_evaluator/00_initial_prompt.md) and [File Attachment Standard](docs/llm_platform/file_attachment_standard.md) — API delivery for LLM Judge hosts.
+6. [src/python/README.md](src/python/README.md) — reference implementation guide.
 
 ---
 
 ## Versioning
 
-Repository version: **1.1.0**
+Repository version: **1.2.0**
 
 Each specification document declares its own version. Implementations should document which specification versions they implement. See [CHANGELOG.md](CHANGELOG.md).

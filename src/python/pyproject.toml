@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monopoly-static-evaluation"
-version = "1.1.0"
-description = "Reference implementation of the Monopoly Static Trade Imbalance Evaluator"
+version = "1.2.0"
+description = "Reference implementation of the Monopoly Static Trade Imbalance Evaluator and LLM Judge"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
+cursor = [
+    "cursor-sdk>=0.1.0",
+]
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.6.0",
@@ -21,10 +24,15 @@ dev = [
 where = ["src"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "../../test/python/unit", "../../test/python/integration"]
 testpaths = ["../../test/python"]
 python_files = ["test*.py"]
 python_functions = ["test_*"]
+markers = [
+    "integration: integration tests requiring external services (skipped when credentials missing)",
+    "llm: tests involving LLM providers",
+    "cursor: Cursor SDK integration tests",
+]
 addopts = "--import-mode=importlib"
 
 [tool.ruff]

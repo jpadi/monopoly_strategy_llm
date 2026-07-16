@@ -16,6 +16,10 @@ The JSON structure is defined separately in the Output Schema document (`06_outp
 
 The Output Specification and Output Schema must use the same concepts, the same section names, and the same terminology.
 
+The serialized Judge output MUST comply with the **Mandatory Response Format** defined in **`06_output_schema.md`**.
+
+The response MUST be exactly one JSON object. Prose, Markdown fences, file references, and partial summaries MUST NOT replace the complete serialized output.
+
 The evaluator's output must clearly separate:
 
 - competitive classification;

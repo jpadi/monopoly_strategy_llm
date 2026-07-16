@@ -15,9 +15,7 @@ from __future__ import annotations
 import inspect
 
 import pytest
-
 from fixtures import scenarioInputs
-
 
 # Representative samples for loader tests (not all scenarios)
 SAMPLE_VALID_SCENARIOS = [
